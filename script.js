@@ -33,32 +33,30 @@ initGuestData();
 // ===========================
 // SLIDESHOW HERO
 // ===========================
-(function () {
+let slideshowTimer = null;
+function startSlideshow() {
+  if (slideshowTimer) clearInterval(slideshowTimer);
   const allSlides = Array.from(document.querySelectorAll('.hero-slideshow .slide'));
   if (!allSlides.length) return;
-  let timer = null;
   let current = 0;
-  function isDesktop() { return window.innerWidth > 768; }
-  function getSlides() {
+  const isDesktop = () => window.innerWidth > 768;
+  const getSlides = () => {
     const device = isDesktop() ? 'desktop' : 'mobile';
     return allSlides.filter(s => s.dataset.device === 'all' || s.dataset.device === device);
-  }
-  function startSlideshow() {
-    if (timer) clearInterval(timer);
-    allSlides.forEach(s => s.classList.remove('active'));
+  };
+  allSlides.forEach(s => s.classList.remove('active'));
+  const slides = getSlides();
+  if (!slides.length) return;
+  slides[0].classList.add('active');
+  slideshowTimer = setInterval(() => {
     const slides = getSlides();
-    current = 0;
-    slides[0].classList.add('active');
-    timer = setInterval(() => {
-      const slides = getSlides();
-      slides[current].classList.remove('active');
-      current = (current + 1) % slides.length;
-      slides[current].classList.add('active');
-    }, 5000);
-  }
-  startSlideshow();
-  window.addEventListener('resize', startSlideshow);
-})();
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+  }, 5000);
+}
+startSlideshow();
+window.addEventListener('resize', startSlideshow);
 
 // ===========================
 // CONTAGEM REGRESSIVA
@@ -260,6 +258,13 @@ async function initConfig() {
     const e = document.querySelector('.footer-quote');
     if (e) e.textContent = '"' + cfg.footer_quote + '"';
   }
+
+  // Nossa História
+  [1, 2, 3].forEach(n => {
+    set(`story-${n}-date`,  cfg[`story_${n}_date`]);
+    set(`story-${n}-title`, cfg[`story_${n}_title`]);
+    set(`story-${n}-text`,  cfg[`story_${n}_text`]);
+  });
 }
 initConfig();
 
@@ -299,6 +304,69 @@ function copyPix() {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closePaymentModal(); closeRsvpOverlay(); }
 });
+
+// ===========================
+// FOTOS DINÂMICAS
+// ===========================
+async function initPhotos() {
+  const { data } = await sb.from('site_photos').select('slot, url, label, "order"').order('order');
+  if (!data || !data.length) return;
+
+  const bySlot = {};
+  data.forEach(p => { (bySlot[p.slot] = bySlot[p.slot] || []).push(p); });
+
+  // Hero slideshow
+  if (bySlot.hero) {
+    const container = document.getElementById('hero-slideshow');
+    if (container) {
+      container.querySelectorAll('.slide').forEach(s => s.remove());
+      bySlot.hero.forEach(p => {
+        const img = document.createElement('img');
+        img.src = p.url;
+        img.alt = p.label || 'Foto';
+        img.className = 'slide';
+        img.dataset.device = p.label && p.label.includes('desktop') ? 'desktop' :
+                             p.label && p.label.includes('mobile')  ? 'mobile'  : 'all';
+        container.appendChild(img);
+      });
+      startSlideshow();
+    }
+  }
+
+  // Galeria pré-wedding
+  const preGrid = document.getElementById('gallery-prewedding-grid');
+  if (preGrid) {
+    const photos = bySlot.gallery_prewedding || [];
+    preGrid.innerHTML = photos.map(p =>
+      `<div class="gallery-item"><img src="${p.url}" alt="${esc(p.label || 'Pré-wedding')}" loading="lazy" /></div>`
+    ).join('');
+  }
+
+  // Galeria casamento
+  const casGrid   = document.getElementById('gallery-casamento-grid');
+  const casSoon   = document.getElementById('gallery-casamento-soon');
+  if (casGrid && casSoon) {
+    const photos = bySlot.gallery_casamento || [];
+    if (photos.length) {
+      casSoon.style.display = 'none';
+      casGrid.innerHTML = photos.map(p =>
+        `<div class="gallery-item"><img src="${p.url}" alt="${esc(p.label || 'Casamento')}" loading="lazy" /></div>`
+      ).join('');
+    }
+  }
+
+  // Timeline fotos
+  [1, 2, 3].forEach(n => {
+    const wrap = document.getElementById(`story-${n}-photo-wrap`);
+    if (!wrap) return;
+    const photos = bySlot[`timeline_${n}`];
+    if (photos && photos.length) {
+      wrap.innerHTML = `<img src="${photos[0].url}" alt="${esc(photos[0].label || 'Nossa história')}" />`;
+      wrap.classList.remove('placeholder-photo');
+    }
+  });
+}
+initPhotos();
 
 // ===========================
 // RECADOS

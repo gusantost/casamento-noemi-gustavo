@@ -115,6 +115,26 @@
     .config-group input:focus { border-bottom-color: var(--gold); }
     .save-success { display: none; font-size: 0.78rem; color: var(--green); margin-top: 12px; }
 
+    /* FOTOS */
+    .photos-section { margin-bottom: 48px; }
+    .photos-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .photos-section-header h3 { font-family: var(--title); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); }
+    .photos-section-header p { font-size: 0.68rem; color: var(--muted); }
+    .btn-upload { padding: 8px 20px; background: transparent; border: 1px solid var(--gold); color: var(--gold); font-family: var(--font); font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .btn-upload:hover { background: var(--gold); color: var(--bg); }
+    .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .photo-thumb { position: relative; background: var(--panel); border: 1px solid var(--border); aspect-ratio: 4/3; overflow: hidden; }
+    .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-thumb .photo-remove { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); border: 1px solid var(--red); color: var(--red); font-size: 0.6rem; padding: 3px 8px; cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase; transition: background 0.2s; }
+    .photo-thumb .photo-remove:hover { background: var(--red); color: #fff; }
+    .photo-thumb .photo-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 4px 8px; font-size: 0.58rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .photo-upload-area { border: 1px dashed rgba(255,255,255,0.2); padding: 24px; text-align: center; cursor: pointer; transition: border-color 0.2s; }
+    .photo-upload-area:hover { border-color: var(--gold); }
+    .photo-upload-area p { font-size: 0.72rem; color: var(--muted); margin-bottom: 8px; }
+    .photo-upload-area input[type=file] { display: none; }
+    .upload-progress { display: none; font-size: 0.72rem; color: var(--gold); margin-top: 8px; }
+    .photos-empty { font-size: 0.78rem; color: var(--muted); font-style: italic; padding: 16px 0; }
+
     @media (max-width: 768px) {
       .admin-header { padding: 0 16px; }
       .tab-btn { padding: 8px 10px; font-size: 0.56rem; }
@@ -148,6 +168,7 @@
         <button class="tab-btn active" onclick="showTab('resumo',this)">Resumo</button>
         <button class="tab-btn" onclick="showTab('convidados',this)">Convidados</button>
         <button class="tab-btn" onclick="showTab('recados',this)">Recados</button>
+        <button class="tab-btn" onclick="showTab('fotos',this)">Fotos</button>
         <button class="tab-btn" onclick="showTab('config',this)">Configurações</button>
       </nav>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
@@ -188,6 +209,83 @@
       <div id="panel-recados" class="tab-panel">
         <p class="section-title">Recados dos Convidados</p>
         <div id="messages-admin-list"></div>
+      </div>
+
+      <!-- FOTOS -->
+      <div id="panel-fotos" class="tab-panel">
+        <p class="section-title">Gerenciar Fotos</p>
+
+        <!-- Hero Slideshow -->
+        <div class="photos-section">
+          <div class="photos-section-header">
+            <div>
+              <h3>Hero — Slideshow</h3>
+              <p>Fotos do carrossel principal. Use o label "desktop" ou "mobile" para filtrar por dispositivo.</p>
+            </div>
+          </div>
+          <div class="photos-grid" id="photos-hero"></div>
+          <div class="photo-upload-area" onclick="document.getElementById('upload-hero').click()">
+            <p>Clique para adicionar foto ao slideshow</p>
+            <input type="file" id="upload-hero" accept="image/*" onchange="uploadPhoto(this,'hero')"/>
+            <p class="upload-progress" id="progress-hero">Enviando...</p>
+          </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="photos-section">
+          <div class="photos-section-header"><div><h3>Nossa História — Fotos dos cards</h3></div></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+            <div>
+              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Card 1 — O começo</p>
+              <div class="photos-grid" id="photos-timeline-1" style="grid-template-columns:1fr;"></div>
+              <div class="photo-upload-area" onclick="document.getElementById('upload-timeline-1').click()">
+                <p>Adicionar foto</p>
+                <input type="file" id="upload-timeline-1" accept="image/*" onchange="uploadPhoto(this,'timeline_1')"/>
+                <p class="upload-progress" id="progress-timeline_1">Enviando...</p>
+              </div>
+            </div>
+            <div>
+              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Card 2 — O pedido</p>
+              <div class="photos-grid" id="photos-timeline-2" style="grid-template-columns:1fr;"></div>
+              <div class="photo-upload-area" onclick="document.getElementById('upload-timeline-2').click()">
+                <p>Adicionar foto</p>
+                <input type="file" id="upload-timeline-2" accept="image/*" onchange="uploadPhoto(this,'timeline_2')"/>
+                <p class="upload-progress" id="progress-timeline_2">Enviando...</p>
+              </div>
+            </div>
+            <div>
+              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Card 3 — O casamento</p>
+              <div class="photos-grid" id="photos-timeline-3" style="grid-template-columns:1fr;"></div>
+              <div class="photo-upload-area" onclick="document.getElementById('upload-timeline-3').click()">
+                <p>Adicionar foto</p>
+                <input type="file" id="upload-timeline-3" accept="image/*" onchange="uploadPhoto(this,'timeline_3')"/>
+                <p class="upload-progress" id="progress-timeline_3">Enviando...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Galeria Pré-wedding -->
+        <div class="photos-section">
+          <div class="photos-section-header"><div><h3>Galeria — Pré-Wedding</h3></div></div>
+          <div class="photos-grid" id="photos-gallery-prewedding"></div>
+          <div class="photo-upload-area" onclick="document.getElementById('upload-prewedding').click()">
+            <p>Clique para adicionar foto à galeria pré-wedding</p>
+            <input type="file" id="upload-prewedding" accept="image/*" multiple onchange="uploadPhoto(this,'gallery_prewedding')"/>
+            <p class="upload-progress" id="progress-gallery_prewedding">Enviando...</p>
+          </div>
+        </div>
+
+        <!-- Galeria Casamento -->
+        <div class="photos-section">
+          <div class="photos-section-header"><div><h3>Galeria — Fotos do Casamento</h3></div></div>
+          <div class="photos-grid" id="photos-gallery-casamento"></div>
+          <div class="photo-upload-area" onclick="document.getElementById('upload-casamento').click()">
+            <p>Clique para adicionar foto da galeria do casamento</p>
+            <input type="file" id="upload-casamento" accept="image/*" multiple onchange="uploadPhoto(this,'gallery_casamento')"/>
+            <p class="upload-progress" id="progress-gallery_casamento">Enviando...</p>
+          </div>
+        </div>
       </div>
 
       <!-- CONFIGURAÇÕES -->
@@ -241,6 +339,28 @@
           <div class="config-group">
             <label>Frase do rodapé</label>
             <input type="text" id="config-quote" placeholder="ex: e foi assim, de repente, que tudo fez sentido."/>
+          </div>
+
+          <p class="config-section-title">Nossa História</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+            <div>
+              <p style="font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Card 1 — O começo</p>
+              <div class="config-group"><label>Data</label><input type="text" id="config-story-1-date" placeholder="ex: Junho de 2020"/></div>
+              <div class="config-group"><label>Título</label><input type="text" id="config-story-1-title" placeholder="ex: O começo"/></div>
+              <div class="config-group"><label>Texto</label><input type="text" id="config-story-1-text" placeholder="Como vocês se conheceram..."/></div>
+            </div>
+            <div>
+              <p style="font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Card 2 — O pedido</p>
+              <div class="config-group"><label>Data</label><input type="text" id="config-story-2-date" placeholder="ex: Dezembro de 2024"/></div>
+              <div class="config-group"><label>Título</label><input type="text" id="config-story-2-title" placeholder="ex: O pedido"/></div>
+              <div class="config-group"><label>Texto</label><input type="text" id="config-story-2-text" placeholder="Como foi o pedido..."/></div>
+            </div>
+            <div>
+              <p style="font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Card 3 — O casamento</p>
+              <div class="config-group"><label>Data</label><input type="text" id="config-story-3-date" placeholder="ex: 08 · 10 · 2026"/></div>
+              <div class="config-group"><label>Título</label><input type="text" id="config-story-3-title" placeholder="ex: O casamento"/></div>
+              <div class="config-group"><label>Texto</label><input type="text" id="config-story-3-text" placeholder="O dia que dirão sim..."/></div>
+            </div>
           </div>
 
           <p class="config-section-title">Pagamento</p>
@@ -312,6 +432,7 @@
       if (name === 'resumo') loadResumo();
       if (name === 'convidados') loadFamilies();
       if (name === 'recados') loadAdminMessages();
+      if (name === 'fotos') loadPhotos();
       if (name === 'config') loadConfig();
     }
 
@@ -453,37 +574,47 @@
       const { data } = await sb.from('site_config').select('key, value');
       if (!data) return;
       const cfg = Object.fromEntries(data.map(r => [r.key, r.value]));
-      const fill = (id, key) => { if (cfg[key]) document.getElementById(id).value = cfg[key]; };
-      fill('config-venue-name',      'venue_name');
-      fill('config-venue-city',      'venue_city');
-      fill('config-venue-datetime',  'venue_datetime_text');
-      fill('config-maps-link',       'venue_maps_link');
-      fill('config-wedding-datetime','wedding_datetime');
-      fill('config-hero-date',       'hero_date');
-      fill('config-hero-location',   'hero_location');
-      fill('config-intro-subtitle',  'intro_subtitle');
-      fill('config-footer-date',     'footer_date');
-      fill('config-deadline',        'rsvp_deadline');
-      fill('config-quote',           'footer_quote');
-      fill('config-pix',             'pix_key');
-      fill('config-card-link',       'card_link');
+      const fill = (id, key) => { const e = document.getElementById(id); if (e && cfg[key]) e.value = cfg[key]; };
+      fill('config-venue-name',       'venue_name');
+      fill('config-venue-city',       'venue_city');
+      fill('config-venue-datetime',   'venue_datetime_text');
+      fill('config-maps-link',        'venue_maps_link');
+      fill('config-wedding-datetime', 'wedding_datetime');
+      fill('config-hero-date',        'hero_date');
+      fill('config-hero-location',    'hero_location');
+      fill('config-intro-subtitle',   'intro_subtitle');
+      fill('config-footer-date',      'footer_date');
+      fill('config-deadline',         'rsvp_deadline');
+      fill('config-quote',            'footer_quote');
+      fill('config-pix',              'pix_key');
+      fill('config-card-link',        'card_link');
+      [1, 2, 3].forEach(n => {
+        fill(`config-story-${n}-date`,  `story_${n}_date`);
+        fill(`config-story-${n}-title`, `story_${n}_title`);
+        fill(`config-story-${n}-text`,  `story_${n}_text`);
+      });
     }
 
     async function saveConfig() {
       const fields = [
-        { key: 'venue_name',        id: 'config-venue-name' },
-        { key: 'venue_city',        id: 'config-venue-city' },
+        { key: 'venue_name',          id: 'config-venue-name' },
+        { key: 'venue_city',          id: 'config-venue-city' },
         { key: 'venue_datetime_text', id: 'config-venue-datetime' },
-        { key: 'venue_maps_link',   id: 'config-maps-link' },
-        { key: 'wedding_datetime',  id: 'config-wedding-datetime' },
-        { key: 'hero_date',         id: 'config-hero-date' },
-        { key: 'hero_location',     id: 'config-hero-location' },
-        { key: 'intro_subtitle',    id: 'config-intro-subtitle' },
-        { key: 'footer_date',       id: 'config-footer-date' },
-        { key: 'rsvp_deadline',     id: 'config-deadline' },
-        { key: 'footer_quote',      id: 'config-quote' },
-        { key: 'pix_key',           id: 'config-pix' },
-        { key: 'card_link',         id: 'config-card-link' }
+        { key: 'venue_maps_link',     id: 'config-maps-link' },
+        { key: 'wedding_datetime',    id: 'config-wedding-datetime' },
+        { key: 'hero_date',           id: 'config-hero-date' },
+        { key: 'hero_location',       id: 'config-hero-location' },
+        { key: 'intro_subtitle',      id: 'config-intro-subtitle' },
+        { key: 'footer_date',         id: 'config-footer-date' },
+        { key: 'rsvp_deadline',       id: 'config-deadline' },
+        { key: 'footer_quote',        id: 'config-quote' },
+        { key: 'pix_key',             id: 'config-pix' },
+        { key: 'card_link',           id: 'config-card-link' },
+        ...[1,2,3].flatMap(n => [
+          { key: `story_${n}_date`,  id: `config-story-${n}-date` },
+          { key: `story_${n}_title`, id: `config-story-${n}-title` },
+          { key: `story_${n}_text`,  id: `config-story-${n}-text` }
+        ])
       ];
       for (const f of fields) {
         const value = document.getElementById(f.id).value.trim();
@@ -492,6 +623,61 @@
       const el = document.getElementById('config-success');
       el.style.display = 'block';
       setTimeout(() => { el.style.display = 'none'; }, 3000);
+    }
+
+    // FOTOS
+    async function loadPhotos() {
+      const { data } = await sb.from('site_photos').select('id, slot, url, label, "order"').order('order');
+      if (!data) return;
+      const bySlot = {};
+      data.forEach(p => { (bySlot[p.slot] = bySlot[p.slot] || []).push(p); });
+      renderPhotoGrid('photos-hero',              bySlot.hero);
+      renderPhotoGrid('photos-timeline-1',        bySlot.timeline_1);
+      renderPhotoGrid('photos-timeline-2',        bySlot.timeline_2);
+      renderPhotoGrid('photos-timeline-3',        bySlot.timeline_3);
+      renderPhotoGrid('photos-gallery-prewedding',bySlot.gallery_prewedding);
+      renderPhotoGrid('photos-gallery-casamento', bySlot.gallery_casamento);
+    }
+
+    function renderPhotoGrid(containerId, photos) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      if (!photos || !photos.length) { el.innerHTML = '<p class="photos-empty">Nenhuma foto ainda.</p>'; return; }
+      el.innerHTML = photos.map(p => `
+        <div class="photo-thumb">
+          <img src="${p.url}" alt="${esc(p.label || '')}"/>
+          <button class="photo-remove" onclick="removePhoto('${p.id}','${containerId}')">✕</button>
+          ${p.label ? `<span class="photo-label">${esc(p.label)}</span>` : ''}
+        </div>`).join('');
+    }
+
+    async function uploadPhoto(input, slot) {
+      const files = Array.from(input.files);
+      if (!files.length) return;
+      const progress = document.getElementById('progress-' + slot);
+      if (progress) progress.style.display = 'block';
+      for (const file of files) {
+        const ext  = file.name.split('.').pop();
+        const path = `${slot}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: upErr } = await sb.storage.from('site-photos').upload(path, file, { upsert: false });
+        if (upErr) { alert('Erro ao enviar foto: ' + upErr.message); continue; }
+        const { data: { publicUrl } } = sb.storage.from('site-photos').getPublicUrl(path);
+        await sb.from('site_photos').insert({ slot, url: publicUrl, label: file.name, order: Date.now() });
+      }
+      if (progress) progress.style.display = 'none';
+      input.value = '';
+      loadPhotos();
+    }
+
+    async function removePhoto(id, containerId) {
+      if (!confirm('Remover esta foto?')) return;
+      const { data } = await sb.from('site_photos').select('url').eq('id', id).single();
+      if (data) {
+        const path = data.url.split('/site-photos/')[1];
+        if (path) await sb.storage.from('site-photos').remove([path]);
+      }
+      await sb.from('site_photos').delete().eq('id', id);
+      loadPhotos();
     }
 
     function esc(str) {

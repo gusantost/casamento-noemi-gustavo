@@ -30,7 +30,7 @@
 
   <!-- HERO -->
   <section id="inicio" class="hero">
-    <div class="hero-slideshow">
+    <div class="hero-slideshow" id="hero-slideshow">
       <img src="Topo V11.jpeg"                    class="slide" data-device="all"     alt="Foto" />
       <img src="noemiegustavo-46.jpg Desktop.jpg" class="slide" data-device="desktop" alt="Foto" />
       <img src="noemiegustavo-95.jpg Desktop.jpg" class="slide" data-device="desktop" alt="Foto" />
@@ -101,33 +101,33 @@
     </div>
     <div class="timeline-grid">
       <div class="timeline-card">
-        <div class="timeline-photo placeholder-photo">
+        <div class="timeline-photo" id="story-1-photo-wrap">
           <div class="photo-placeholder">Foto do início</div>
         </div>
         <div class="timeline-info">
-          <span class="timeline-date">[Data que se conheceram]</span>
-          <h3>O começo</h3>
-          <p>[Em breve — adicione aqui como vocês se conheceram]</p>
+          <span class="timeline-date" id="story-1-date">[Data que se conheceram]</span>
+          <h3 id="story-1-title">O começo</h3>
+          <p id="story-1-text">[Em breve — adicione aqui como vocês se conheceram]</p>
         </div>
       </div>
       <div class="timeline-card">
-        <div class="timeline-photo placeholder-photo">
+        <div class="timeline-photo" id="story-2-photo-wrap">
           <div class="photo-placeholder">Foto do pedido</div>
         </div>
         <div class="timeline-info">
-          <span class="timeline-date">[Data do pedido]</span>
-          <h3>O pedido</h3>
-          <p>[Em breve — como foi o pedido de casamento?]</p>
+          <span class="timeline-date" id="story-2-date">[Data do pedido]</span>
+          <h3 id="story-2-title">O pedido</h3>
+          <p id="story-2-text">[Em breve — como foi o pedido de casamento?]</p>
         </div>
       </div>
       <div class="timeline-card">
-        <div class="timeline-photo">
-          <img src="noemiegustavo-94.jpg" alt="Pré-wedding" />
+        <div class="timeline-photo" id="story-3-photo-wrap">
+          <img src="noemiegustavo-94.jpg" alt="O casamento" />
         </div>
         <div class="timeline-info">
-          <span class="timeline-date">08 · 10 · 2026</span>
-          <h3>O casamento</h3>
-          <p>O dia em que diremos sim para uma vida inteira juntos.</p>
+          <span class="timeline-date" id="story-3-date">08 · 10 · 2026</span>
+          <h3 id="story-3-title">O casamento</h3>
+          <p id="story-3-text">O dia em que diremos sim para uma vida inteira juntos.</p>
         </div>
       </div>
     </div>
@@ -190,23 +190,20 @@
     <div class="gallery-overlay-body">
       <!-- PRÉ-WEDDING -->
       <div id="tab-prewedding" class="gallery-tab-content active">
-        <div class="gallery-masonry">
-          <div class="gallery-item"><img src="noemiegustavo-94.jpg" alt="Pré-wedding" loading="lazy" /></div>
-          <div class="gallery-item"><img src="https://photos.smugmug.com/Memories-Photography/2026/Pre-Wedding/Noemi-e-Gustavo/i-RhJWtZK/0/K2NVdn9nCDPC7sgLvbgv4Dj2D2R8zkwkJmB3k9gv9/L/noemiegustavo-1-L.jpg" alt="Pré-wedding" loading="lazy" /></div>
-          <div class="gallery-item"><img src="https://photos.smugmug.com/Memories-Photography/2026/Pre-Wedding/Noemi-e-Gustavo/i-qX3Rh4c/0/L4xfFgs4t6frgtNgK7dMZcRqwvSwZjD3mmMGMqpJZ/L/noemiegustavo-6-L.jpg" alt="Pré-wedding" loading="lazy" /></div>
-          <div class="gallery-item"><img src="Foto Site.jpg" alt="Pré-wedding" loading="lazy" /></div>
-        </div>
-        <p class="gallery-credit">Fotos: Kell Barbosa Photography</p>
+        <div class="gallery-masonry" id="gallery-prewedding-grid"></div>
+        <p class="gallery-credit" id="gallery-prewedding-credit"></p>
       </div>
 
       <!-- FOTOS DO CASAMENTO -->
       <div id="tab-casamento" class="gallery-tab-content">
-        <div class="gallery-coming-soon">
+        <div class="gallery-masonry" id="gallery-casamento-grid"></div>
+        <div class="gallery-coming-soon" id="gallery-casamento-soon">
           <div class="coming-soon-icon">📷</div>
           <p class="coming-soon-title">Em breve...</p>
           <p class="coming-soon-sub">As fotos do nosso grande dia serão compartilhadas aqui após o casamento.</p>
           <p class="coming-soon-date">08 · 10 · 2026</p>
         </div>
+        <p class="gallery-credit" id="gallery-casamento-credit"></p>
       </div>
     </div>
   </div>
