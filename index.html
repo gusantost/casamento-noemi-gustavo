@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gustavo & Noemi — 08.10.2026</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&amp;family=Cinzel:wght@300;400;500&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <a href="#inicio" class="nav-logo"><img src="logo-ng.png" alt="NG" class="nav-logo-img" /></a>
+    <ul class="nav-links">
+      <li><a href="#inicio">Início</a></li>
+      <li><a href="#historia">Nossa História</a></li>
+      <li><a href="#cerimonia">Cerimônia</a></li>
+      <li><a href="#presentes">Presentes</a></li>
+      <li><a href="#galeria">Galeria</a></li>
+      <li><a href="#" onclick="openRsvpOverlay(); return false;">Confirmar Presença</a></li>
+    </ul>
+    <div class="nav-mobile-actions">
+      <a href="#" onclick="openRsvpOverlay(); return false;" class="nav-confirm-btn">Confirmar Presença</a>
+      <button class="nav-toggle" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="inicio" class="hero">
+    <div class="hero-slideshow">
+      <img src="Topo V11.jpeg"                    class="slide" data-device="all"     alt="Foto" />
+      <img src="noemiegustavo-46.jpg Desktop.jpg" class="slide" data-device="desktop" alt="Foto" />
+      <img src="noemiegustavo-95.jpg Desktop.jpg" class="slide" data-device="desktop" alt="Foto" />
+      <img src="noemiegustavo-58.jpg"             class="slide" data-device="mobile"  alt="Foto" />
+      <img src="noemiegustavo-94.jpg"             class="slide" data-device="mobile"  alt="Foto" />
+      <img src="noemiegustavo-149.jpg"            class="slide" data-device="mobile"  alt="Foto" />
+      <img src="noemiegustavo-214.jpg"            class="slide" data-device="mobile"  alt="Foto" />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Casamento</p>
+      <h1 class="hero-title">
+        <span class="hero-name">Noemi</span>
+        <span class="hero-amp">&</span>
+        <span class="hero-name">Gustavo</span>
+      </h1>
+      <p class="hero-date-line">08 | 10 | 2026</p>
+      <p class="hero-location">João Pessoa — PB</p>
+    </div>
+    <div class="hero-scroll"><span>↓</span></div>
+  </section>
+
+  <!-- INTRO ESCURO -->
+  <section class="intro-dark">
+    <div class="intro-inner">
+      <h2 class="intro-names">Noemi <em class="amp">&</em> Gustavo</h2>
+      <p class="intro-sub">nas linhas em que nos encontramos</p>
+      <div class="intro-date-block">
+        <span class="intro-date">08 DE OUTUBRO DE 2026</span>
+        <span class="intro-sep">·</span>
+        <span class="intro-city">João Pessoa — PB</span>
+      </div>
+      <a href="#" onclick="openRsvpOverlay(); return false;" class="btn-dark-outline">Confirmar Presença</a>
+    </div>
+  </section>
+
+  <!-- CONTAGEM -->
+  <section class="countdown-section">
+    <p class="count-label">Faltam</p>
+    <div class="count-grid">
+      <div class="count-item">
+        <span id="days">--</span>
+        <label>Dias</label>
+      </div>
+      <div class="count-sep">·</div>
+      <div class="count-item">
+        <span id="hours">--</span>
+        <label>Horas</label>
+      </div>
+      <div class="count-sep">·</div>
+      <div class="count-item">
+        <span id="minutes">--</span>
+        <label>Minutos</label>
+      </div>
+      <div class="count-sep">·</div>
+      <div class="count-item">
+        <span id="seconds">--</span>
+        <label>Segundos</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="historia" class="timeline-section">
+    <div class="timeline-header">
+      <span class="section-num">01</span>
+      <h2 class="section-heading">Nossa História</h2>
+    </div>
+    <div class="timeline-grid">
+      <div class="timeline-card">
+        <div class="timeline-photo placeholder-photo">
+          <div class="photo-placeholder">Foto do início</div>
+        </div>
+        <div class="timeline-info">
+          <span class="timeline-date">[Data que se conheceram]</span>
+          <h3>O começo</h3>
+          <p>[Em breve — adicione aqui como vocês se conheceram]</p>
+        </div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-photo placeholder-photo">
+          <div class="photo-placeholder">Foto do pedido</div>
+        </div>
+        <div class="timeline-info">
+          <span class="timeline-date">[Data do pedido]</span>
+          <h3>O pedido</h3>
+          <p>[Em breve — como foi o pedido de casamento?]</p>
+        </div>
+      </div>
+      <div class="timeline-card">
+        <div class="timeline-photo">
+          <img src="noemiegustavo-94.jpg" alt="Pré-wedding" />
+        </div>
+        <div class="timeline-info">
+          <span class="timeline-date">08 · 10 · 2026</span>
+          <h3>O casamento</h3>
+          <p>O dia em que diremos sim para uma vida inteira juntos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLAGEM HORIZONTAL — O Grande Dia -->
+  <div class="hscroll-wrapper" id="cerimonia">
+    <div class="hscroll-sticky">
+      <div class="hscroll-header">
+        <span class="section-num">02</span>
+        <h2 class="section-heading">O Grande Dia</h2>
+      </div>
+      <div class="hscroll-track" id="hscroll-track">
+        <div class="info-card info-card-large info-card-venue">
+          <img src="Jardim Riviera.png" alt="Jardim Riviera" class="venue-bg" />
+          <div class="venue-overlay"></div>
+          <div class="venue-content">
+            <span class="info-num">01</span>
+            <h3>Local do Evento</h3>
+            <p>Jardim Riviera<br />João Pessoa — PB</p>
+            <p class="info-detail">08 de Outubro de 2026 · 15h00</p>
+            <a href="https://maps.google.com/?q=Jardim+Riviera+João+Pessoa+PB" target="_blank" class="btn-text venue-link">Ver no mapa →</a>
+          </div>
+        </div>
+        <div id="presentes" class="info-card">
+          <span class="info-num">02</span>
+          <h3>Presentes</h3>
+          <p>Sua presença já é o maior presente. Mas se quiser nos presentear, clique abaixo.</p>
+          <a href="#gifts-modal" class="btn-text" onclick="openGiftsSection()">Ver lista →</a>
+        </div>
+        <div class="info-card info-card-photo" onclick="openGallery()" style="cursor:pointer;">
+          <img src="Foto Site.jpg" alt="Casal" />
+          <div class="info-card-photo-overlay">
+            <span class="info-num">03</span>
+            <h3>Galeria</h3>
+            <span class="btn-text" style="color:rgba(255,255,255,0.7);margin-top:4px;">Ver fotos →</span>
+          </div>
+        </div>
+        <div class="info-card">
+          <span class="info-num">04</span>
+          <h3>Recados</h3>
+          <p>Deixe uma mensagem especial para os noivos.</p>
+          <a href="#recados" class="btn-text">Escrever recado →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALERIA OVERLAY -->
+  <div id="gallery-overlay" class="gallery-overlay" style="display:none;">
+    <div class="gallery-overlay-header">
+      <div class="gallery-overlay-logo"><span class="logo-n">N</span><span class="logo-g">G</span></div>
+      <div class="gallery-tabs">
+        <button class="gallery-tab active" onclick="switchTab('prewedding', this)">Pré-Wedding</button>
+        <button class="gallery-tab" onclick="switchTab('casamento', this)">Fotos do Casamento</button>
+      </div>
+      <button class="gallery-overlay-close" onclick="closeGallery()">✕ Fechar</button>
+    </div>
+
+    <div class="gallery-overlay-body">
+      <!-- PRÉ-WEDDING -->
+      <div id="tab-prewedding" class="gallery-tab-content active">
+        <div class="gallery-masonry">
+          <div class="gallery-item"><img src="noemiegustavo-94.jpg" alt="Pré-wedding" loading="lazy" /></div>
+          <div class="gallery-item"><img src="https://photos.smugmug.com/Memories-Photography/2026/Pre-Wedding/Noemi-e-Gustavo/i-RhJWtZK/0/K2NVdn9nCDPC7sgLvbgv4Dj2D2R8zkwkJmB3k9gv9/L/noemiegustavo-1-L.jpg" alt="Pré-wedding" loading="lazy" /></div>
+          <div class="gallery-item"><img src="https://photos.smugmug.com/Memories-Photography/2026/Pre-Wedding/Noemi-e-Gustavo/i-qX3Rh4c/0/L4xfFgs4t6frgtNgK7dMZcRqwvSwZjD3mmMGMqpJZ/L/noemiegustavo-6-L.jpg" alt="Pré-wedding" loading="lazy" /></div>
+          <div class="gallery-item"><img src="Foto Site.jpg" alt="Pré-wedding" loading="lazy" /></div>
+        </div>
+        <p class="gallery-credit">Fotos: Kell Barbosa Photography</p>
+      </div>
+
+      <!-- FOTOS DO CASAMENTO -->
+      <div id="tab-casamento" class="gallery-tab-content">
+        <div class="gallery-coming-soon">
+          <div class="coming-soon-icon">📷</div>
+          <p class="coming-soon-title">Em breve...</p>
+          <p class="coming-soon-sub">As fotos do nosso grande dia serão compartilhadas aqui após o casamento.</p>
+          <p class="coming-soon-date">08 · 10 · 2026</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RSVP OVERLAY (tela cheia) -->
+  <div id="rsvp-overlay" class="rsvp-overlay">
+    <div class="rsvp-overlay-header">
+      <img src="logo-ng.png" alt="NG" class="rsvp-overlay-logo" />
+      <button class="rsvp-overlay-close" onclick="closeRsvpOverlay()">← Voltar para o início</button>
+    </div>
+    <div class="rsvp-overlay-body">
+      <div class="rsvp-overlay-inner">
+        <p class="rsvp-overlay-eyebrow">Confirmar Presença</p>
+        <h2 class="rsvp-overlay-names">Noemi <em>&</em> Gustavo</h2>
+        <p class="rsvp-overlay-deadline">Confirme até <strong>31 de Julho de 2026</strong></p>
+
+        <div class="rsvp-overlay-search">
+          <p class="guest-search-label">Digite seu nome para encontrar seu convite</p>
+          <div class="guest-search-row">
+            <input type="text" id="guest-search-input" placeholder="Digite seu nome..." oninput="searchGuest()" autocomplete="off" />
+          </div>
+        </div>
+
+        <div id="family-result" class="family-result" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LISTA DE PRESENTES (modal) -->
+  <section class="gifts-section" id="gifts-section" style="display:none;">
+    <div class="gifts-inner">
+      <div class="gifts-header">
+        <span class="section-num">—</span>
+        <h2 class="section-heading">Lista de Presentes</h2>
+        <button class="gifts-close" onclick="closeGiftsSection()">✕ Fechar</button>
+      </div>
+      <div class="gifts-grid">
+        <div class="gift-item">
+          <h4>Jantar Especial</h4>
+          <p>Contribua para uma noite inesquecível</p>
+          <span class="gift-price">R$ 150,00</span>
+          <button onclick="openPaymentModal('Jantar Especial', 150)">Presentear</button>
+        </div>
+        <div class="gift-item">
+          <h4>Lua de Mel</h4>
+          <p>A viagem dos sonhos</p>
+          <span class="gift-price">R$ 300,00</span>
+          <button onclick="openPaymentModal('Lua de Mel', 300)">Presentear</button>
+        </div>
+        <div class="gift-item">
+          <h4>Nosso Lar</h4>
+          <p>Para o novo lar do casal</p>
+          <span class="gift-price">R$ 200,00</span>
+          <button onclick="openPaymentModal('Nosso Lar', 200)">Presentear</button>
+        </div>
+        <div class="gift-item">
+          <h4>Surpresa</h4>
+          <p>Escolha o valor que quiser</p>
+          <span class="gift-price">Valor livre</span>
+          <button onclick="openPaymentModal('Surpresa', 0)">Presentear</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECADOS -->
+  <section id="recados" class="messages-section">
+    <div class="messages-inner">
+      <div class="messages-header">
+        <span class="section-num">06</span>
+        <h2 class="section-heading">Recados</h2>
+      </div>
+      <form class="message-form" id="messageForm" onsubmit="submitMessage(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Seu nome</label>
+            <input type="text" id="msg-name" placeholder="Seu nome" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Mensagem</label>
+          <textarea id="msg-text" rows="4" placeholder="Escreva suas palavras para os noivos..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit dark">Enviar Recado</button>
+        <p id="msg-success" class="success-msg" style="display:none;">✓ Recado enviado! Obrigado pelo carinho.</p>
+      </form>
+      <div class="messages-list" id="messagesList"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p class="footer-names">Noemi <em class="amp">&</em> Gustavo</p>
+    <p class="footer-date">08 · 10 · 2026 — João Pessoa, PB</p>
+    <p class="footer-quote">"e foi assim, de repente, que tudo fez sentido."</p>
+  </footer>
+
+  <!-- MODAL PAGAMENTO -->
+  <div id="paymentModal" class="modal-overlay" onclick="closeModalOutside(event)">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closePaymentModal()">✕</button>
+      <div class="modal-header">
+        <h3 id="modal-gift-name">Presente</h3>
+        <p id="modal-gift-price" class="modal-price">R$ 0,00</p>
+      </div>
+      <div id="step-method" class="modal-step active">
+        <p class="modal-subtitle">Como você prefere pagar?</p>
+        <div class="payment-options">
+          <button class="payment-option" onclick="selectMethod('pix')">
+            <strong>PIX</strong>
+            <small>Instantâneo · Sem taxas</small>
+          </button>
+          <button class="payment-option" onclick="selectMethod('card')">
+            <strong>Cartão</strong>
+            <small>Crédito ou débito</small>
+          </button>
+        </div>
+      </div>
+      <div id="step-pix" class="modal-step">
+        <p class="modal-subtitle">Chave PIX</p>
+        <div class="pix-box">
+          <p class="pix-label">CPF</p>
+          <div class="pix-key-row">
+            <span id="pix-key-value" class="pix-key">000.000.000-00</span>
+            <button class="btn-copy" onclick="copyPix()">Copiar</button>
+          </div>
+          <p id="pix-copied" style="display:none;color:var(--green);font-size:.8rem;margin-top:8px;">✓ Copiado!</p>
+          <p id="pix-amount" class="pix-amount">R$ —</p>
+          <p class="pix-note">Não é necessário enviar comprovante. Obrigado! 💚</p>
+        </div>
+        <button class="btn-back" onclick="goBack()">← Voltar</button>
+      </div>
+      <div id="step-card" class="modal-step">
+        <p class="modal-subtitle">Pagamento por cartão</p>
+        <div class="card-info-box">
+          <p>Você será direcionado para o nosso parceiro de pagamento seguro.</p>
+          <div class="card-badges">
+            <span>🔒 SSL</span><span>Visa</span><span>Master</span><span>Elo</span>
+          </div>
+        </div>
+        <a id="card-payment-link" href="#" target="_blank" class="btn-submit" onclick="closePaymentModal()">Pagar com Cartão →</a>
+        <button class="btn-back" onclick="goBack()">← Voltar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
