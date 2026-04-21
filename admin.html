@@ -128,12 +128,19 @@
     .photo-thumb .photo-remove { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); border: 1px solid var(--red); color: var(--red); font-size: 0.6rem; padding: 3px 8px; cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase; transition: background 0.2s; }
     .photo-thumb .photo-remove:hover { background: var(--red); color: #fff; }
     .photo-thumb .photo-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 4px 8px; font-size: 0.58rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .photo-upload-area { border: 1px dashed rgba(255,255,255,0.2); padding: 24px; text-align: center; cursor: pointer; transition: border-color 0.2s; }
-    .photo-upload-area:hover { border-color: var(--gold); }
-    .photo-upload-area p { font-size: 0.72rem; color: var(--muted); margin-bottom: 8px; }
+    .photo-upload-area { border: 1px dashed rgba(255,255,255,0.2); padding: 32px 24px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .photo-upload-area:hover, .photo-upload-area.dragover { border-color: var(--gold); background: rgba(201,169,110,0.05); }
+    .photo-upload-area p { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+    .photo-upload-area .drag-hint { font-size: 0.62rem; color: rgba(255,255,255,0.25); }
     .photo-upload-area input[type=file] { display: none; }
     .upload-progress { display: none; font-size: 0.72rem; color: var(--gold); margin-top: 8px; }
     .photos-empty { font-size: 0.78rem; color: var(--muted); font-style: italic; padding: 16px 0; }
+    .photo-thumb.is-hidden { opacity: 0.35; }
+    .photo-thumb.is-hidden .photo-restore { display: block; }
+    .photo-thumb .photo-restore { display: none; position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.7); border: 1px solid var(--green); color: var(--green); font-size: 0.6rem; padding: 3px 8px; cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase; }
+    .photo-thumb .photo-hidden-badge { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; font-size: 0.62rem; color: var(--red); letter-spacing: 0.14em; text-transform: uppercase; }
+    .photo-thumb.is-hidden .photo-hidden-badge { display: flex; }
+    .photos-subsection-title { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; }
 
     @media (max-width: 768px) {
       .admin-header { padding: 0 16px; }
@@ -220,57 +227,61 @@
         <p style="font-size:0.78rem;color:var(--muted);margin-bottom:32px;">Clique na área pontilhada para enviar fotos. Elas são salvas automaticamente. Para remover, clique no ✕ sobre a foto.</p>
 
         <!-- Hero Slideshow -->
+        <!-- Hero Mobile -->
         <div class="photos-section">
-          <div class="photos-section-header"><div><h3>Hero — Slideshow</h3><p>Fotos exibidas separadamente em celular e desktop.</p></div></div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
-            <div>
-              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Mobile (celular)</p>
-              <div class="photos-grid" id="photos-hero-mobile"></div>
-              <div class="photo-upload-area" onclick="document.getElementById('upload-hero-mobile').click()">
-                <p>Adicionar foto mobile</p>
-                <input type="file" id="upload-hero-mobile" accept="image/*" multiple onchange="uploadPhoto(this,'hero_mobile')"/>
-                <p class="upload-progress" id="progress-hero_mobile">Enviando...</p>
-              </div>
-            </div>
-            <div>
-              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Desktop (computador)</p>
-              <div class="photos-grid" id="photos-hero-desktop"></div>
-              <div class="photo-upload-area" onclick="document.getElementById('upload-hero-desktop').click()">
-                <p>Adicionar foto desktop</p>
-                <input type="file" id="upload-hero-desktop" accept="image/*" multiple onchange="uploadPhoto(this,'hero_desktop')"/>
-                <p class="upload-progress" id="progress-hero_desktop">Enviando...</p>
-              </div>
-            </div>
+          <div class="photos-section-header"><div><h3>Hero — Mobile (celular)</h3></div></div>
+          <p class="photos-subsection-title">Fotos atuais</p>
+          <div class="photos-grid" id="photos-hero-mobile"></div>
+          <p class="photos-subsection-title" style="margin-top:20px;">Adicionar fotos</p>
+          <div class="photo-upload-area" id="drop-hero_mobile" onclick="document.getElementById('upload-hero-mobile').click()">
+            <p>Arraste fotos aqui ou clique para buscar</p>
+            <span class="drag-hint">Aceita múltiplos arquivos</span>
+            <input type="file" id="upload-hero-mobile" accept="image/*" multiple onchange="uploadPhoto(this,'hero_mobile')"/>
+            <p class="upload-progress" id="progress-hero_mobile">Enviando...</p>
+          </div>
+        </div>
+
+        <!-- Hero Desktop -->
+        <div class="photos-section">
+          <div class="photos-section-header"><div><h3>Hero — Desktop (computador)</h3></div></div>
+          <p class="photos-subsection-title">Fotos atuais</p>
+          <div class="photos-grid" id="photos-hero-desktop"></div>
+          <p class="photos-subsection-title" style="margin-top:20px;">Adicionar fotos</p>
+          <div class="photo-upload-area" id="drop-hero_desktop" onclick="document.getElementById('upload-hero-desktop').click()">
+            <p>Arraste fotos aqui ou clique para buscar</p>
+            <span class="drag-hint">Aceita múltiplos arquivos</span>
+            <input type="file" id="upload-hero-desktop" accept="image/*" multiple onchange="uploadPhoto(this,'hero_desktop')"/>
+            <p class="upload-progress" id="progress-hero_desktop">Enviando...</p>
           </div>
         </div>
 
         <!-- Timeline -->
         <div class="photos-section">
           <div class="photos-section-header"><div><h3>Nossa História — Fotos dos cards</h3></div></div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
             <div>
-              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Card 1 — O começo</p>
+              <p class="photos-subsection-title">Card 1 — O começo</p>
               <div class="photos-grid" id="photos-timeline-1" style="grid-template-columns:1fr;"></div>
-              <div class="photo-upload-area" onclick="document.getElementById('upload-timeline-1').click()">
-                <p>Adicionar foto</p>
+              <div class="photo-upload-area" id="drop-timeline_1" onclick="document.getElementById('upload-timeline-1').click()">
+                <p>Arrastar ou clicar</p>
                 <input type="file" id="upload-timeline-1" accept="image/*" onchange="uploadPhoto(this,'timeline_1')"/>
                 <p class="upload-progress" id="progress-timeline_1">Enviando...</p>
               </div>
             </div>
             <div>
-              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Card 2 — O pedido</p>
+              <p class="photos-subsection-title">Card 2 — O pedido</p>
               <div class="photos-grid" id="photos-timeline-2" style="grid-template-columns:1fr;"></div>
-              <div class="photo-upload-area" onclick="document.getElementById('upload-timeline-2').click()">
-                <p>Adicionar foto</p>
+              <div class="photo-upload-area" id="drop-timeline_2" onclick="document.getElementById('upload-timeline-2').click()">
+                <p>Arrastar ou clicar</p>
                 <input type="file" id="upload-timeline-2" accept="image/*" onchange="uploadPhoto(this,'timeline_2')"/>
                 <p class="upload-progress" id="progress-timeline_2">Enviando...</p>
               </div>
             </div>
             <div>
-              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Card 3 — O casamento</p>
+              <p class="photos-subsection-title">Card 3 — O casamento</p>
               <div class="photos-grid" id="photos-timeline-3" style="grid-template-columns:1fr;"></div>
-              <div class="photo-upload-area" onclick="document.getElementById('upload-timeline-3').click()">
-                <p>Adicionar foto</p>
+              <div class="photo-upload-area" id="drop-timeline_3" onclick="document.getElementById('upload-timeline-3').click()">
+                <p>Arrastar ou clicar</p>
                 <input type="file" id="upload-timeline-3" accept="image/*" onchange="uploadPhoto(this,'timeline_3')"/>
                 <p class="upload-progress" id="progress-timeline_3">Enviando...</p>
               </div>
@@ -281,9 +292,12 @@
         <!-- Galeria Pré-wedding -->
         <div class="photos-section">
           <div class="photos-section-header"><div><h3>Galeria — Pré-Wedding</h3></div></div>
+          <p class="photos-subsection-title">Fotos atuais</p>
           <div class="photos-grid" id="photos-gallery-prewedding"></div>
-          <div class="photo-upload-area" onclick="document.getElementById('upload-prewedding').click()">
-            <p>Clique para adicionar foto à galeria pré-wedding</p>
+          <p class="photos-subsection-title" style="margin-top:20px;">Adicionar fotos</p>
+          <div class="photo-upload-area" id="drop-gallery_prewedding" onclick="document.getElementById('upload-prewedding').click()">
+            <p>Arraste fotos aqui ou clique para buscar</p>
+            <span class="drag-hint">Aceita múltiplos arquivos</span>
             <input type="file" id="upload-prewedding" accept="image/*" multiple onchange="uploadPhoto(this,'gallery_prewedding')"/>
             <p class="upload-progress" id="progress-gallery_prewedding">Enviando...</p>
           </div>
@@ -292,9 +306,12 @@
         <!-- Galeria Casamento -->
         <div class="photos-section">
           <div class="photos-section-header"><div><h3>Galeria — Fotos do Casamento</h3></div></div>
+          <p class="photos-subsection-title">Fotos atuais</p>
           <div class="photos-grid" id="photos-gallery-casamento"></div>
-          <div class="photo-upload-area" onclick="document.getElementById('upload-casamento').click()">
-            <p>Clique para adicionar foto da galeria do casamento</p>
+          <p class="photos-subsection-title" style="margin-top:20px;">Adicionar fotos</p>
+          <div class="photo-upload-area" id="drop-gallery_casamento" onclick="document.getElementById('upload-casamento').click()">
+            <p>Arraste fotos aqui ou clique para buscar</p>
+            <span class="drag-hint">Aceita múltiplos arquivos</span>
             <input type="file" id="upload-casamento" accept="image/*" multiple onchange="uploadPhoto(this,'gallery_casamento')"/>
             <p class="upload-progress" id="progress-gallery_casamento">Enviando...</p>
           </div>
@@ -440,6 +457,7 @@
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
       loadResumo();
+      setTimeout(initDragDrop, 100);
     }
 
     function showTab(name, btn) {
@@ -643,36 +661,95 @@
       setTimeout(() => { el.style.display = 'none'; }, 3000);
     }
 
-    // FOTOS
+    // FOTOS — fotos padrão do site (hardcoded)
+    const STATIC_DEFAULTS = {
+      hero_mobile:  [
+        { src: 'Topo V11.jpeg',            label: 'Topo (todos)' },
+        { src: 'noemiegustavo-58.jpg',     label: 'Foto 58' },
+        { src: 'noemiegustavo-94.jpg',     label: 'Foto 94' },
+        { src: 'noemiegustavo-149.jpg',    label: 'Foto 149' },
+        { src: 'noemiegustavo-214.jpg',    label: 'Foto 214' },
+      ],
+      hero_desktop: [
+        { src: 'noemiegustavo-46.jpg Desktop.jpg', label: 'Foto 46' },
+        { src: 'noemiegustavo-95.jpg Desktop.jpg', label: 'Foto 95' },
+      ],
+      gallery_prewedding: [
+        { src: 'noemiegustavo-94.jpg', label: 'Foto 94' },
+        { src: 'Foto Site.jpg',        label: 'Foto Site' },
+      ],
+      timeline_3: [
+        { src: 'noemiegustavo-94.jpg', label: 'Foto 94' },
+      ]
+    };
+
+    let hiddenDefaults = [];
+
     async function loadPhotos() {
+      // Carregar lista de fotos padrão ocultas
+      const { data: cfgData } = await sb.from('site_config').select('value').eq('key','hidden_defaults').single();
+      hiddenDefaults = cfgData ? JSON.parse(cfgData.value || '[]') : [];
+
       const { data } = await sb.from('site_photos').select('id, slot, url, label, "order"').order('order');
-      if (!data) return;
       const bySlot = {};
-      data.forEach(p => { (bySlot[p.slot] = bySlot[p.slot] || []).push(p); });
-      renderPhotoGrid('photos-hero-mobile',        bySlot.hero_mobile);
-      renderPhotoGrid('photos-hero-desktop',       bySlot.hero_desktop);
-      renderPhotoGrid('photos-timeline-1',         bySlot.timeline_1);
-      renderPhotoGrid('photos-timeline-2',         bySlot.timeline_2);
-      renderPhotoGrid('photos-timeline-3',         bySlot.timeline_3);
-      renderPhotoGrid('photos-gallery-prewedding', bySlot.gallery_prewedding);
-      renderPhotoGrid('photos-gallery-casamento',  bySlot.gallery_casamento);
+      (data || []).forEach(p => { (bySlot[p.slot] = bySlot[p.slot] || []).push(p); });
+
+      renderPhotoGrid('photos-hero-mobile',        bySlot.hero_mobile,        STATIC_DEFAULTS.hero_mobile);
+      renderPhotoGrid('photos-hero-desktop',       bySlot.hero_desktop,       STATIC_DEFAULTS.hero_desktop);
+      renderPhotoGrid('photos-timeline-1',         bySlot.timeline_1,         null);
+      renderPhotoGrid('photos-timeline-2',         bySlot.timeline_2,         null);
+      renderPhotoGrid('photos-timeline-3',         bySlot.timeline_3,         STATIC_DEFAULTS.timeline_3);
+      renderPhotoGrid('photos-gallery-prewedding', bySlot.gallery_prewedding, STATIC_DEFAULTS.gallery_prewedding);
+      renderPhotoGrid('photos-gallery-casamento',  bySlot.gallery_casamento,  null);
     }
 
-    function renderPhotoGrid(containerId, photos) {
+    function renderPhotoGrid(containerId, dbPhotos, staticPhotos) {
       const el = document.getElementById(containerId);
       if (!el) return;
-      if (!photos || !photos.length) { el.innerHTML = '<p class="photos-empty">Nenhuma foto ainda.</p>'; return; }
-      el.innerHTML = photos.map(p => `
-        <div class="photo-thumb">
-          <img src="${p.url}" alt="${esc(p.label || '')}"/>
-          <button class="photo-remove" onclick="removePhoto('${p.id}','${containerId}')">✕</button>
-          ${p.label ? `<span class="photo-label">${esc(p.label)}</span>` : ''}
-        </div>`).join('');
+      let html = '';
+
+      // Fotos padrão (com toggle ocultar/mostrar)
+      if (staticPhotos && staticPhotos.length) {
+        html += staticPhotos.map(p => {
+          const isHidden = hiddenDefaults.includes(p.src);
+          return `
+          <div class="photo-thumb ${isHidden ? 'is-hidden' : ''}">
+            <img src="${esc(p.src)}" alt="${esc(p.label)}"/>
+            <div class="photo-hidden-badge">Oculta</div>
+            <button class="photo-restore" onclick="toggleDefault('${esc(p.src)}', false)">Mostrar</button>
+            ${!isHidden ? `<button class="photo-remove" onclick="toggleDefault('${esc(p.src)}', true)">✕</button>` : ''}
+            <span class="photo-label">${esc(p.label)} · padrão</span>
+          </div>`;
+        }).join('');
+      }
+
+      // Fotos enviadas via upload (com remoção permanente)
+      if (dbPhotos && dbPhotos.length) {
+        html += dbPhotos.map(p => `
+          <div class="photo-thumb">
+            <img src="${p.url}" alt="${esc(p.label || '')}"/>
+            <button class="photo-remove" onclick="removePhoto('${p.id}')">✕</button>
+            ${p.label ? `<span class="photo-label">${esc(p.label)}</span>` : ''}
+          </div>`).join('');
+      }
+
+      el.innerHTML = html || '<p class="photos-empty">Nenhuma foto ainda.</p>';
     }
 
-    async function uploadPhoto(input, slot) {
-      const files = Array.from(input.files);
-      if (!files.length) return;
+    async function toggleDefault(src, hide) {
+      if (hide) {
+        if (!hiddenDefaults.includes(src)) hiddenDefaults.push(src);
+      } else {
+        hiddenDefaults = hiddenDefaults.filter(s => s !== src);
+      }
+      await sb.from('site_config').upsert({ key: 'hidden_defaults', value: JSON.stringify(hiddenDefaults) });
+      loadPhotos();
+      const msg = document.getElementById('photos-saved-msg');
+      if (msg) { msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 2000); }
+    }
+
+    async function handleFiles(files, slot) {
+      if (!files || !files.length) return;
       const progress = document.getElementById('progress-' + slot);
       if (progress) progress.style.display = 'block';
       for (const file of files) {
@@ -684,14 +761,18 @@
         await sb.from('site_photos').insert({ slot, url: publicUrl, label: file.name, order: Date.now() });
       }
       if (progress) progress.style.display = 'none';
-      input.value = '';
       loadPhotos();
       const msg = document.getElementById('photos-saved-msg');
       if (msg) { msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000); }
     }
 
-    async function removePhoto(id, containerId) {
-      if (!confirm('Remover esta foto?')) return;
+    async function uploadPhoto(input, slot) {
+      await handleFiles(input.files, slot);
+      input.value = '';
+    }
+
+    async function removePhoto(id) {
+      if (!confirm('Remover esta foto permanentemente?')) return;
       const { data } = await sb.from('site_photos').select('url').eq('id', id).single();
       if (data) {
         const path = data.url.split('/site-photos/')[1];
@@ -699,6 +780,20 @@
       }
       await sb.from('site_photos').delete().eq('id', id);
       loadPhotos();
+    }
+
+    // Drag & drop em todas as áreas de upload
+    function initDragDrop() {
+      document.querySelectorAll('.photo-upload-area[id^="drop-"]').forEach(area => {
+        const slot = area.id.replace('drop-', '');
+        area.addEventListener('dragover',  e => { e.preventDefault(); area.classList.add('dragover'); });
+        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+        area.addEventListener('drop', e => {
+          e.preventDefault();
+          area.classList.remove('dragover');
+          handleFiles(e.dataTransfer.files, slot);
+        });
+      });
     }
 
     function esc(str) {

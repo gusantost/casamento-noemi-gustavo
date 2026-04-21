@@ -265,6 +265,18 @@ async function initConfig() {
     set(`story-${n}-title`, cfg[`story_${n}_title`]);
     set(`story-${n}-text`,  cfg[`story_${n}_text`]);
   });
+
+  // Ocultar fotos padrão removidas pelo admin
+  if (cfg.hidden_defaults) {
+    try {
+      const hidden = JSON.parse(cfg.hidden_defaults);
+      hidden.forEach(src => {
+        const slide = document.querySelector(`.hero-slideshow .slide[src="${src}"]`);
+        if (slide) slide.remove();
+      });
+      startSlideshow();
+    } catch(e) {}
+  }
 }
 initConfig();
 
