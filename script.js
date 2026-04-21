@@ -7,7 +7,8 @@ const sb = createClient(
   'sb_publishable_z1AM8yoagsTudefecB9raA_bCYzHUqa'
 );
 
-let guestData = [];
+let guestData   = [];
+let weddingDate = new Date('2026-10-08T15:00:00');
 
 async function initGuestData() {
   try {
@@ -225,7 +226,6 @@ function closeGiftsSection() {
 // ===========================
 let PIX_KEY        = '000.000.000-00';
 let CARD_BASE_LINK = 'https://mpago.la/SEU_LINK';
-let weddingDate    = new Date('2026-10-08T15:00:00');
 
 async function initConfig() {
   const { data } = await sb.from('site_config').select('key, value');
@@ -316,17 +316,22 @@ async function initPhotos() {
   data.forEach(p => { (bySlot[p.slot] = bySlot[p.slot] || []).push(p); });
 
   // Hero slideshow
-  if (bySlot.hero) {
+  const heroMobile  = bySlot.hero_mobile  || [];
+  const heroDesktop = bySlot.hero_desktop || [];
+  if (heroMobile.length || heroDesktop.length) {
     const container = document.getElementById('hero-slideshow');
     if (container) {
       container.querySelectorAll('.slide').forEach(s => s.remove());
-      bySlot.hero.forEach(p => {
+      heroDesktop.forEach(p => {
         const img = document.createElement('img');
-        img.src = p.url;
-        img.alt = p.label || 'Foto';
-        img.className = 'slide';
-        img.dataset.device = p.label && p.label.includes('desktop') ? 'desktop' :
-                             p.label && p.label.includes('mobile')  ? 'mobile'  : 'all';
+        img.src = p.url; img.alt = p.label || 'Foto';
+        img.className = 'slide'; img.dataset.device = 'desktop';
+        container.appendChild(img);
+      });
+      heroMobile.forEach(p => {
+        const img = document.createElement('img');
+        img.src = p.url; img.alt = p.label || 'Foto';
+        img.className = 'slide'; img.dataset.device = 'mobile';
         container.appendChild(img);
       });
       startSlideshow();

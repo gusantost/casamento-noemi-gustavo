@@ -213,21 +213,34 @@
 
       <!-- FOTOS -->
       <div id="panel-fotos" class="tab-panel">
-        <p class="section-title">Gerenciar Fotos</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <p class="section-title" style="margin-bottom:0;">Gerenciar Fotos</p>
+          <p id="photos-saved-msg" style="display:none;font-size:0.78rem;color:var(--green);">✓ Foto salva com sucesso!</p>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:32px;">Clique na área pontilhada para enviar fotos. Elas são salvas automaticamente. Para remover, clique no ✕ sobre a foto.</p>
 
         <!-- Hero Slideshow -->
         <div class="photos-section">
-          <div class="photos-section-header">
+          <div class="photos-section-header"><div><h3>Hero — Slideshow</h3><p>Fotos exibidas separadamente em celular e desktop.</p></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
             <div>
-              <h3>Hero — Slideshow</h3>
-              <p>Fotos do carrossel principal. Use o label "desktop" ou "mobile" para filtrar por dispositivo.</p>
+              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Mobile (celular)</p>
+              <div class="photos-grid" id="photos-hero-mobile"></div>
+              <div class="photo-upload-area" onclick="document.getElementById('upload-hero-mobile').click()">
+                <p>Adicionar foto mobile</p>
+                <input type="file" id="upload-hero-mobile" accept="image/*" multiple onchange="uploadPhoto(this,'hero_mobile')"/>
+                <p class="upload-progress" id="progress-hero_mobile">Enviando...</p>
+              </div>
             </div>
-          </div>
-          <div class="photos-grid" id="photos-hero"></div>
-          <div class="photo-upload-area" onclick="document.getElementById('upload-hero').click()">
-            <p>Clique para adicionar foto ao slideshow</p>
-            <input type="file" id="upload-hero" accept="image/*" onchange="uploadPhoto(this,'hero')"/>
-            <p class="upload-progress" id="progress-hero">Enviando...</p>
+            <div>
+              <p style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Desktop (computador)</p>
+              <div class="photos-grid" id="photos-hero-desktop"></div>
+              <div class="photo-upload-area" onclick="document.getElementById('upload-hero-desktop').click()">
+                <p>Adicionar foto desktop</p>
+                <input type="file" id="upload-hero-desktop" accept="image/*" multiple onchange="uploadPhoto(this,'hero_desktop')"/>
+                <p class="upload-progress" id="progress-hero_desktop">Enviando...</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -290,7 +303,13 @@
 
       <!-- CONFIGURAÇÕES -->
       <div id="panel-config" class="tab-panel">
-        <p class="section-title">Configurações do Site</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <p class="section-title" style="margin-bottom:0;">Configurações do Site</p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <p id="config-success" class="save-success" style="margin:0;">✓ Salvo com sucesso!</p>
+            <button class="btn-primary" style="width:auto;display:inline-block;padding:10px 32px;" onclick="saveConfig()">Salvar Alterações</button>
+          </div>
+        </div>
         <div class="config-form">
 
           <p class="config-section-title">O Evento</p>
@@ -374,7 +393,6 @@
           </div>
 
           <button class="btn-primary" style="width:auto;display:inline-block;padding:12px 40px;" onclick="saveConfig()">Salvar Alterações</button>
-          <p id="config-success" class="save-success">✓ Alterações salvas com sucesso!</p>
         </div>
       </div>
 
@@ -631,12 +649,13 @@
       if (!data) return;
       const bySlot = {};
       data.forEach(p => { (bySlot[p.slot] = bySlot[p.slot] || []).push(p); });
-      renderPhotoGrid('photos-hero',              bySlot.hero);
-      renderPhotoGrid('photos-timeline-1',        bySlot.timeline_1);
-      renderPhotoGrid('photos-timeline-2',        bySlot.timeline_2);
-      renderPhotoGrid('photos-timeline-3',        bySlot.timeline_3);
-      renderPhotoGrid('photos-gallery-prewedding',bySlot.gallery_prewedding);
-      renderPhotoGrid('photos-gallery-casamento', bySlot.gallery_casamento);
+      renderPhotoGrid('photos-hero-mobile',        bySlot.hero_mobile);
+      renderPhotoGrid('photos-hero-desktop',       bySlot.hero_desktop);
+      renderPhotoGrid('photos-timeline-1',         bySlot.timeline_1);
+      renderPhotoGrid('photos-timeline-2',         bySlot.timeline_2);
+      renderPhotoGrid('photos-timeline-3',         bySlot.timeline_3);
+      renderPhotoGrid('photos-gallery-prewedding', bySlot.gallery_prewedding);
+      renderPhotoGrid('photos-gallery-casamento',  bySlot.gallery_casamento);
     }
 
     function renderPhotoGrid(containerId, photos) {
@@ -667,6 +686,8 @@
       if (progress) progress.style.display = 'none';
       input.value = '';
       loadPhotos();
+      const msg = document.getElementById('photos-saved-msg');
+      if (msg) { msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000); }
     }
 
     async function removePhoto(id, containerId) {
