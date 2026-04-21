@@ -64,7 +64,7 @@ initGuestData();
 // CONTAGEM REGRESSIVA
 // ===========================
 function updateCountdown() {
-  const wedding = new Date('2026-10-08T15:00:00');
+  const wedding = weddingDate || new Date('2026-10-08T15:00:00');
   const now     = new Date();
   const diff    = wedding - now;
   if (diff <= 0) {
@@ -225,21 +225,40 @@ function closeGiftsSection() {
 // ===========================
 // PAGAMENTO
 // ===========================
-let PIX_KEY = '000.000.000-00';
-const CARD_BASE_LINK = 'https://mpago.la/SEU_LINK';
+let PIX_KEY        = '000.000.000-00';
+let CARD_BASE_LINK = 'https://mpago.la/SEU_LINK';
+let weddingDate    = new Date('2026-10-08T15:00:00');
 
 async function initConfig() {
   const { data } = await sb.from('site_config').select('key, value');
   if (!data) return;
   const cfg = Object.fromEntries(data.map(r => [r.key, r.value]));
-  if (cfg.pix_key) PIX_KEY = cfg.pix_key;
+
+  const set   = (id, v) => { const e = document.getElementById(id); if (e && v) e.textContent = v; };
+  const setHr = (id, v) => { const e = document.getElementById(id); if (e && v) e.href = v; };
+
+  if (cfg.pix_key)           PIX_KEY = cfg.pix_key;
+  if (cfg.card_link)         CARD_BASE_LINK = cfg.card_link;
+  if (cfg.wedding_datetime)  weddingDate = new Date(cfg.wedding_datetime);
+
+  set('hero-date-line',     cfg.hero_date);
+  set('hero-location',      cfg.hero_location);
+  set('intro-subtitle',     cfg.intro_subtitle);
+  set('venue-datetime-text',cfg.venue_datetime_text);
+  set('footer-date-text',   cfg.footer_date);
+  setHr('venue-maps-link',  cfg.venue_maps_link);
+
+  if (cfg.venue_name || cfg.venue_city) {
+    const e = document.getElementById('venue-name-city');
+    if (e) e.innerHTML = (cfg.venue_name || 'Jardim Riviera') + '<br />' + (cfg.venue_city || 'João Pessoa — PB');
+  }
   if (cfg.rsvp_deadline) {
-    const el = document.querySelector('.rsvp-overlay-deadline strong');
-    if (el) el.textContent = cfg.rsvp_deadline;
+    const e = document.querySelector('.rsvp-overlay-deadline strong');
+    if (e) e.textContent = cfg.rsvp_deadline;
   }
   if (cfg.footer_quote) {
-    const el = document.querySelector('.footer-quote');
-    if (el) el.textContent = '"' + cfg.footer_quote + '"';
+    const e = document.querySelector('.footer-quote');
+    if (e) e.textContent = '"' + cfg.footer_quote + '"';
   }
 }
 initConfig();
