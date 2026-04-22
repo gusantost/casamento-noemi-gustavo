@@ -142,6 +142,36 @@
     .photo-thumb.is-hidden .photo-hidden-badge { display: flex; }
     .photos-subsection-title { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin: 20px 0 10px; }
 
+    /* PRESENTES */
+    .gifts-admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .gift-admin-card { background: var(--panel); border: 1px solid var(--border); margin-bottom: 16px; padding: 24px; display: grid; grid-template-columns: 120px 1fr auto; gap: 24px; align-items: start; }
+    .gift-img-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .gift-img-preview { width: 120px; height: 90px; object-fit: cover; display: block; border: 1px solid var(--border); background: rgba(255,255,255,0.03); }
+    .gift-img-placeholder { width: 120px; height: 90px; border: 1px dashed rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; transition: border-color 0.2s; }
+    .gift-img-placeholder:hover { border-color: var(--gold); }
+    .gift-img-placeholder input { display: none; }
+    .gift-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+    .gift-fields .config-group { margin-bottom: 18px; }
+    .gift-fields .config-group.full { grid-column: 1 / -1; }
+    .gift-actions { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+    .gift-saved-badge { display: none; font-size: 0.68rem; color: var(--green); text-align: center; }
+    .new-gift-form { background: var(--panel); border: 1px solid var(--gold); padding: 24px; margin-bottom: 24px; display: none; }
+    .new-gift-form.open { display: block; }
+    .new-gift-form h4 { font-family: var(--title); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .new-gift-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+    .new-gift-grid .config-group { margin-bottom: 18px; }
+    .new-gift-grid .config-group.full { grid-column: 1 / -1; }
+    .gift-img-upload-area { border: 1px dashed rgba(255,255,255,0.2); padding: 20px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 18px; }
+    .gift-img-upload-area:hover, .gift-img-upload-area.dragover { border-color: var(--gold); background: rgba(201,169,110,0.05); }
+    .gift-img-upload-area p { font-size: 0.7rem; color: var(--muted); }
+    .gift-img-upload-area input { display: none; }
+    @media (max-width: 768px) {
+      .gift-admin-card { grid-template-columns: 1fr; }
+      .gift-actions { flex-direction: row; }
+      .new-gift-grid { grid-template-columns: 1fr; }
+      .gift-fields { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 768px) {
       .admin-header { padding: 0 16px; }
       .tab-btn { padding: 8px 10px; font-size: 0.56rem; }
@@ -176,6 +206,7 @@
         <button class="tab-btn" onclick="showTab('convidados',this)">Convidados</button>
         <button class="tab-btn" onclick="showTab('recados',this)">Recados</button>
         <button class="tab-btn" onclick="showTab('fotos',this)">Fotos</button>
+        <button class="tab-btn" onclick="showTab('presentes',this)">Presentes</button>
         <button class="tab-btn" onclick="showTab('config',this)">Configurações</button>
       </nav>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
@@ -316,6 +347,40 @@
             <p class="upload-progress" id="progress-gallery_casamento">Enviando...</p>
           </div>
         </div>
+      </div>
+
+      <!-- PRESENTES -->
+      <div id="panel-presentes" class="tab-panel">
+        <div class="gifts-admin-header">
+          <p class="section-title" style="margin-bottom:0;">Lista de Presentes</p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <p id="gifts-saved-msg" style="display:none;font-size:0.78rem;color:var(--green);">✓ Salvo!</p>
+            <button class="btn-add" onclick="toggleNewGiftForm()">+ Novo Presente</button>
+          </div>
+        </div>
+
+        <!-- Formulário de novo presente -->
+        <div id="new-gift-form" class="new-gift-form">
+          <h4>Novo Presente</h4>
+          <div class="gift-img-upload-area" id="drop-new-gift" onclick="document.getElementById('upload-new-gift').click()">
+            <p>Imagem do presente — clique ou arraste</p>
+            <input type="file" id="upload-new-gift" accept="image/*" onchange="previewNewGiftImage(this)"/>
+          </div>
+          <img id="new-gift-preview" style="display:none;width:120px;height:90px;object-fit:cover;border:1px solid var(--border);margin-bottom:18px;" />
+          <div class="new-gift-grid">
+            <div class="config-group"><label>Nome do presente</label><input type="text" id="ng-name" placeholder="ex: Lua de Mel"/></div>
+            <div class="config-group"><label>Valor (R$)</label><input type="number" id="ng-value" placeholder="ex: 300" min="0" step="0.01"/></div>
+            <div class="config-group full"><label>Descrição curta</label><input type="text" id="ng-description" placeholder="ex: Contribua para a viagem dos nossos sonhos"/></div>
+            <div class="config-group full"><label>Link pagamento no cartão</label><input type="url" id="ng-card-link" placeholder="https://mpago.la/..."/></div>
+            <div class="config-group full"><label>Chave PIX (específica deste presente)</label><input type="text" id="ng-pix-key" placeholder="CPF, e-mail ou chave aleatória"/></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn-sm" onclick="saveNewGift()">Adicionar Presente</button>
+            <button class="btn-sm outline" onclick="toggleNewGiftForm()">Cancelar</button>
+          </div>
+        </div>
+
+        <div id="gifts-admin-list"></div>
       </div>
 
       <!-- CONFIGURAÇÕES -->
@@ -469,6 +534,7 @@
       if (name === 'convidados') loadFamilies();
       if (name === 'recados') loadAdminMessages();
       if (name === 'fotos') loadPhotos();
+      if (name === 'presentes') loadGifts();
       if (name === 'config') loadConfig();
     }
 
@@ -795,6 +861,177 @@
         });
       });
     }
+
+    // PRESENTES
+    let newGiftImageFile = null;
+    let newGiftImageUrl  = null;
+
+    function toggleNewGiftForm() {
+      const form = document.getElementById('new-gift-form');
+      form.classList.toggle('open');
+      if (!form.classList.contains('open')) {
+        ['ng-name','ng-value','ng-description','ng-card-link','ng-pix-key'].forEach(id => {
+          document.getElementById(id).value = '';
+        });
+        document.getElementById('new-gift-preview').style.display = 'none';
+        newGiftImageFile = null;
+        newGiftImageUrl  = null;
+      }
+    }
+
+    function previewNewGiftImage(input) {
+      const file = input.files[0];
+      if (!file) return;
+      newGiftImageFile = file;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.getElementById('new-gift-preview');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function uploadGiftImage(file) {
+      if (!file) return null;
+      const ext  = file.name.split('.').pop();
+      const path = `gifts/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error } = await sb.storage.from('site-photos').upload(path, file, { upsert: false });
+      if (error) { alert('Erro ao enviar imagem: ' + error.message); return null; }
+      const { data: { publicUrl } } = sb.storage.from('site-photos').getPublicUrl(path);
+      return publicUrl;
+    }
+
+    async function saveNewGift() {
+      const name = document.getElementById('ng-name').value.trim();
+      if (!name) { alert('O nome do presente é obrigatório.'); return; }
+      const value       = parseFloat(document.getElementById('ng-value').value) || null;
+      const description = document.getElementById('ng-description').value.trim() || null;
+      const cardLink    = document.getElementById('ng-card-link').value.trim() || null;
+      const pixKey      = document.getElementById('ng-pix-key').value.trim() || null;
+      const imageUrl    = newGiftImageFile ? await uploadGiftImage(newGiftImageFile) : null;
+
+      const { data: existing } = await sb.from('gifts').select('"order"').order('order', { ascending: false }).limit(1);
+      const nextOrder = existing && existing.length ? existing[0].order + 1 : 0;
+
+      const { error } = await sb.from('gifts').insert({
+        name, value, description, card_link: cardLink, pix_key: pixKey, image_url: imageUrl, order: nextOrder
+      });
+      if (error) { alert('Erro ao salvar: ' + error.message); return; }
+      toggleNewGiftForm();
+      loadGifts();
+      showGiftsSaved();
+    }
+
+    async function loadGifts() {
+      const { data, error } = await sb.from('gifts').select('*').order('order').order('created_at');
+      const el = document.getElementById('gifts-admin-list');
+      if (error || !data || data.length === 0) {
+        el.innerHTML = '<div class="empty-state">Nenhum presente cadastrado. Clique em "+ Novo Presente" para adicionar.</div>';
+        return;
+      }
+      el.innerHTML = data.map(g => renderGiftCard(g)).join('');
+
+      // Drag & drop nas imagens
+      data.forEach(g => {
+        const area = document.getElementById('gift-img-drop-' + g.id);
+        if (area) {
+          area.addEventListener('dragover',  e => { e.preventDefault(); area.classList.add('dragover'); });
+          area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+          area.addEventListener('drop', async e => {
+            e.preventDefault();
+            area.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) await updateGiftImage(g.id, file);
+          });
+        }
+      });
+    }
+
+    function renderGiftCard(g) {
+      const imgHtml = g.image_url
+        ? `<img class="gift-img-preview" src="${esc(g.image_url)}" alt="${esc(g.name)}" />`
+        : '';
+      const valueStr = g.value != null ? g.value : '';
+      return `
+        <div class="gift-admin-card" id="gift-card-${g.id}">
+          <div class="gift-img-wrap">
+            ${imgHtml}
+            <div class="gift-img-placeholder gift-img-upload-area" id="gift-img-drop-${g.id}" onclick="document.getElementById('gift-img-input-${g.id}').click()">
+              <input type="file" id="gift-img-input-${g.id}" accept="image/*" onchange="updateGiftImage('${g.id}', this.files[0])"/>
+              ${g.image_url ? 'Trocar imagem' : 'Adicionar imagem'}
+            </div>
+          </div>
+          <div class="gift-fields">
+            <div class="config-group"><label>Nome</label><input type="text" id="gf-name-${g.id}" value="${esc(g.name)}"/></div>
+            <div class="config-group"><label>Valor (R$)</label><input type="number" id="gf-value-${g.id}" value="${valueStr}" min="0" step="0.01" placeholder="Valor livre"/></div>
+            <div class="config-group full"><label>Descrição</label><input type="text" id="gf-desc-${g.id}" value="${esc(g.description || '')}"/></div>
+            <div class="config-group full"><label>Link pagamento cartão</label><input type="url" id="gf-card-${g.id}" value="${esc(g.card_link || '')}" placeholder="https://mpago.la/..."/></div>
+            <div class="config-group full"><label>Chave PIX</label><input type="text" id="gf-pix-${g.id}" value="${esc(g.pix_key || '')}" placeholder="CPF, e-mail ou chave aleatória"/></div>
+          </div>
+          <div class="gift-actions">
+            <button class="btn-sm" onclick="saveGift('${g.id}')">Salvar</button>
+            <button class="btn-delete" onclick="deleteGift('${g.id}')">Remover</button>
+            <span class="gift-saved-badge" id="gift-saved-${g.id}">✓ Salvo</span>
+          </div>
+        </div>`;
+    }
+
+    async function saveGift(id) {
+      const name  = document.getElementById('gf-name-'  + id).value.trim();
+      if (!name) { alert('O nome é obrigatório.'); return; }
+      const value = parseFloat(document.getElementById('gf-value-' + id).value) || null;
+      const desc  = document.getElementById('gf-desc-'  + id).value.trim() || null;
+      const card  = document.getElementById('gf-card-'  + id).value.trim() || null;
+      const pix   = document.getElementById('gf-pix-'   + id).value.trim() || null;
+      const { error } = await sb.from('gifts').update({
+        name, value, description: desc, card_link: card, pix_key: pix
+      }).eq('id', id);
+      if (error) { alert('Erro ao salvar: ' + error.message); return; }
+      const badge = document.getElementById('gift-saved-' + id);
+      badge.style.display = 'block';
+      setTimeout(() => { badge.style.display = 'none'; }, 2500);
+    }
+
+    async function updateGiftImage(id, file) {
+      if (!file) return;
+      const url = await uploadGiftImage(file);
+      if (!url) return;
+      await sb.from('gifts').update({ image_url: url }).eq('id', id);
+      loadGifts();
+    }
+
+    async function deleteGift(id) {
+      if (!confirm('Remover este presente da lista?')) return;
+      const { data } = await sb.from('gifts').select('image_url').eq('id', id).single();
+      if (data && data.image_url && data.image_url.includes('/site-photos/')) {
+        const path = data.image_url.split('/site-photos/')[1];
+        if (path) await sb.storage.from('site-photos').remove([path]);
+      }
+      await sb.from('gifts').delete().eq('id', id);
+      loadGifts();
+      showGiftsSaved();
+    }
+
+    function showGiftsSaved() {
+      const msg = document.getElementById('gifts-saved-msg');
+      if (msg) { msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 2500); }
+    }
+
+    // Drag & drop no form de novo presente
+    document.addEventListener('DOMContentLoaded', () => {
+      const area = document.getElementById('drop-new-gift');
+      if (area) {
+        area.addEventListener('dragover',  e => { e.preventDefault(); area.classList.add('dragover'); });
+        area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+        area.addEventListener('drop', e => {
+          e.preventDefault();
+          area.classList.remove('dragover');
+          const file = e.dataTransfer.files[0];
+          if (file) { newGiftImageFile = file; previewNewGiftImage({ files: [file] }); }
+        });
+      }
+    });
 
     function esc(str) {
       if (!str) return '';

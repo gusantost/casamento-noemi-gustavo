@@ -240,31 +240,8 @@
         <h2 class="section-heading">Lista de Presentes</h2>
         <button class="gifts-close" onclick="closeGiftsSection()">✕ Fechar</button>
       </div>
-      <div class="gifts-grid">
-        <div class="gift-item">
-          <h4>Jantar Especial</h4>
-          <p>Contribua para uma noite inesquecível</p>
-          <span class="gift-price">R$ 150,00</span>
-          <button onclick="openPaymentModal('Jantar Especial', 150)">Presentear</button>
-        </div>
-        <div class="gift-item">
-          <h4>Lua de Mel</h4>
-          <p>A viagem dos sonhos</p>
-          <span class="gift-price">R$ 300,00</span>
-          <button onclick="openPaymentModal('Lua de Mel', 300)">Presentear</button>
-        </div>
-        <div class="gift-item">
-          <h4>Nosso Lar</h4>
-          <p>Para o novo lar do casal</p>
-          <span class="gift-price">R$ 200,00</span>
-          <button onclick="openPaymentModal('Nosso Lar', 200)">Presentear</button>
-        </div>
-        <div class="gift-item">
-          <h4>Surpresa</h4>
-          <p>Escolha o valor que quiser</p>
-          <span class="gift-price">Valor livre</span>
-          <button onclick="openPaymentModal('Surpresa', 0)">Presentear</button>
-        </div>
+      <div class="gifts-grid" id="gifts-grid">
+        <div class="gift-item" style="opacity:0.4;"><h4>Carregando...</h4></div>
       </div>
     </div>
   </section>

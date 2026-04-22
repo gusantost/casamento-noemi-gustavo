@@ -280,14 +280,69 @@ async function initConfig() {
 }
 initConfig();
 
-function openPaymentModal(giftName, price) {
+// Presentes
+let currentGiftPix  = null;
+let currentGiftCard = null;
+
+async function initGifts() {
+  const { data } = await sb.from('gifts').select('*').order('order').order('created_at');
+  const grid = document.getElementById('gifts-grid');
+  if (!grid) return;
+  if (!data || data.length === 0) {
+    grid.innerHTML = `
+      <div class="gift-item">
+        <div class="gift-item-no-img">
+          <h4>Surpresa</h4>
+          <p>Escolha o valor que quiser</p>
+          <span class="gift-price">Valor livre</span>
+          <button onclick="openPaymentModal('Surpresa', 0, null, null)">Presentear</button>
+        </div>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = data.map(g => {
+    const priceStr = g.value > 0
+      ? 'R$\u00a0' + parseFloat(g.value).toFixed(2).replace('.', ',')
+      : 'Valor livre';
+    const imgHtml = g.image_url
+      ? `<img class="gift-item-img" src="${g.image_url}" alt="${escHtml(g.name)}" loading="lazy"/>`
+      : '';
+    const bodyClass = g.image_url ? 'gift-item-body' : 'gift-item-no-img';
+    const pixArg  = g.pix_key  ? `'${escJs(g.pix_key)}'`  : 'null';
+    const cardArg = g.card_link ? `'${escJs(g.card_link)}'` : 'null';
+    return `
+      <div class="gift-item">
+        ${imgHtml}
+        <div class="${bodyClass}">
+          <h4>${escHtml(g.name)}</h4>
+          ${g.description ? `<p>${escHtml(g.description)}</p>` : '<p></p>'}
+          <span class="gift-price">${priceStr}</span>
+          <button onclick="openPaymentModal('${escJs(g.name)}', ${g.value || 0}, ${pixArg}, ${cardArg})">Presentear</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+initGifts();
+
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escJs(s) {
+  if (!s) return '';
+  return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
+
+function openPaymentModal(giftName, price, pixKey, cardLink) {
+  currentGiftPix  = pixKey  || PIX_KEY;
+  currentGiftCard = cardLink || CARD_BASE_LINK;
   document.getElementById('modal-gift-name').textContent  = giftName;
   document.getElementById('modal-gift-price').textContent =
     price > 0 ? 'R$ ' + price.toFixed(2).replace('.', ',') : 'Valor livre';
-  document.getElementById('pix-key-value').textContent    = PIX_KEY;
+  document.getElementById('pix-key-value').textContent    = currentGiftPix;
   document.getElementById('pix-amount').textContent       =
     price > 0 ? 'R$ ' + price.toFixed(2).replace('.', ',') : 'À sua escolha';
-  document.getElementById('card-payment-link').href       = CARD_BASE_LINK;
+  document.getElementById('card-payment-link').href       = currentGiftCard;
   showStep('method');
   document.getElementById('paymentModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -307,7 +362,7 @@ function showStep(name) {
   document.getElementById('pix-copied').style.display = 'none';
 }
 function copyPix() {
-  navigator.clipboard.writeText(PIX_KEY).then(() => {
+  navigator.clipboard.writeText(currentGiftPix || PIX_KEY).then(() => {
     const el = document.getElementById('pix-copied');
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 3000);
