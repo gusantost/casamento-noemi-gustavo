@@ -213,6 +213,7 @@ async function setStatus(memberId, status, familyName) {
 // PRESENTES
 // ===========================
 function openGiftsSection() {
+  document.querySelector('.nav-links').classList.remove('open');
   const el = document.getElementById('gifts-section');
   el.style.display = 'block';
   setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 50);
