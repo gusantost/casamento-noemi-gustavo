@@ -315,16 +315,19 @@
         </div>
       </div>
       <div id="step-pix" class="modal-step">
-        <p class="modal-subtitle">Chave PIX</p>
+        <p class="modal-subtitle">PIX Copia e Cola</p>
         <div class="pix-box">
-          <p class="pix-label">CPF</p>
-          <div class="pix-key-row">
-            <span id="pix-key-value" class="pix-key">000.000.000-00</span>
-            <button class="btn-copy" onclick="copyPix()">Copiar</button>
-          </div>
-          <p id="pix-copied" style="display:none;color:var(--green);font-size:.8rem;margin-top:8px;">✓ Copiado!</p>
           <p id="pix-amount" class="pix-amount">R$ —</p>
-          <p class="pix-note">Não é necessário enviar comprovante. Obrigado! 💚</p>
+          <div class="pix-code-wrap">
+            <p id="pix-code-preview" class="pix-code-preview">—</p>
+          </div>
+          <button class="btn-copy-pix" onclick="copyPix()">Copiar código PIX</button>
+          <p id="pix-copied" style="display:none;color:var(--green);font-size:.78rem;margin-top:10px;">✓ Copiado! Cole no app do seu banco.</p>
+          <p class="pix-note">O valor já vem preenchido automaticamente.</p>
+          <div class="pix-key-ref">
+            <span class="pix-label-small">Ou use a chave:</span>
+            <span id="pix-key-value" class="pix-key-small">—</span>
+          </div>
         </div>
         <button class="btn-back" onclick="goBack()">← Voltar</button>
       </div>

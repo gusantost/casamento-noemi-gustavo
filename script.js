@@ -282,8 +282,38 @@ async function initConfig() {
 initConfig();
 
 // Presentes
-let currentGiftPix  = null;
-let currentGiftCard = null;
+let currentGiftPix     = null;
+let currentGiftCard    = null;
+let currentPixPayload  = null;
+
+function generatePixPayload(pixKey, valor, nome, cidade) {
+  function f(id, val) {
+    const v = String(val);
+    return id + v.length.toString().padStart(2, '0') + v;
+  }
+  function removeAcentos(s) {
+    return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9 ]/g, '');
+  }
+  const mai    = f('26', f('00', 'br.gov.bcb.pix') + f('01', pixKey.trim()));
+  const amount = valor > 0 ? f('54', valor.toFixed(2)) : '';
+  const add    = f('62', f('05', '***'));
+  let payload  =
+    f('00', '01') + f('01', '11') + mai +
+    f('52', '0000') + f('53', '986') + amount +
+    f('58', 'BR') +
+    f('59', removeAcentos(nome).substring(0, 25)) +
+    f('60', removeAcentos(cidade).substring(0, 15)) +
+    add + '6304';
+  let crc = 0xFFFF;
+  for (let i = 0; i < payload.length; i++) {
+    crc ^= payload.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
+    }
+  }
+  return payload + crc.toString(16).toUpperCase().padStart(4, '0');
+}
 
 async function initGifts() {
   const { data } = await sb.from('gifts').select('*').order('order').order('created_at');
@@ -337,12 +367,16 @@ function escJs(s) {
 function openPaymentModal(giftName, price, pixKey, cardLink) {
   currentGiftPix  = pixKey  || PIX_KEY;
   currentGiftCard = cardLink || CARD_BASE_LINK;
+
+  currentPixPayload = generatePixPayload(currentGiftPix, price || 0, 'Noemi e Gustavo', 'Sao Paulo');
+
   document.getElementById('modal-gift-name').textContent  = giftName;
   document.getElementById('modal-gift-price').textContent =
     price > 0 ? 'R$ ' + price.toFixed(2).replace('.', ',') : 'Valor livre';
-  document.getElementById('pix-key-value').textContent    = currentGiftPix;
   document.getElementById('pix-amount').textContent       =
     price > 0 ? 'R$ ' + price.toFixed(2).replace('.', ',') : 'À sua escolha';
+  document.getElementById('pix-code-preview').textContent = currentPixPayload;
+  document.getElementById('pix-key-value').textContent    = currentGiftPix;
   document.getElementById('card-payment-link').href       = currentGiftCard;
   showStep('method');
   document.getElementById('paymentModal').classList.add('open');
@@ -363,7 +397,8 @@ function showStep(name) {
   document.getElementById('pix-copied').style.display = 'none';
 }
 function copyPix() {
-  navigator.clipboard.writeText(currentGiftPix || PIX_KEY).then(() => {
+  const text = currentPixPayload || currentGiftPix || PIX_KEY;
+  navigator.clipboard.writeText(text).then(() => {
     const el = document.getElementById('pix-copied');
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 3000);
