@@ -291,18 +291,21 @@ function generatePixPayload(pixKey, valor, nome, cidade) {
     const v = String(val);
     return id + v.length.toString().padStart(2, '0') + v;
   }
-  function removeAcentos(s) {
+  function clean(s) {
     return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9 ]/g, '');
   }
-  const mai    = f('26', f('00', 'br.gov.bcb.pix') + f('01', pixKey.trim()));
-  const amount = valor > 0 ? f('54', valor.toFixed(2)) : '';
+  const v      = parseFloat(valor) || 0;
+  const key    = pixKey.trim();
+  const mai    = f('26', f('00', 'br.gov.bcb.pix') + f('01', key));
+  const amount = v > 0 ? f('54', v.toFixed(2)) : '';
   const add    = f('62', f('05', '***'));
   let payload  =
-    f('00', '01') + f('01', '11') + mai +
+    f('00', '01') +
+    mai +
     f('52', '0000') + f('53', '986') + amount +
     f('58', 'BR') +
-    f('59', removeAcentos(nome).substring(0, 25)) +
-    f('60', removeAcentos(cidade).substring(0, 15)) +
+    f('59', clean(nome).substring(0, 25)) +
+    f('60', clean(cidade).substring(0, 15)) +
     add + '6304';
   let crc = 0xFFFF;
   for (let i = 0; i < payload.length; i++) {
@@ -365,17 +368,22 @@ function escJs(s) {
 }
 
 function openPaymentModal(giftName, price, pixKey, cardLink) {
+  const v = parseFloat(price) || 0;
   currentGiftPix  = pixKey  || PIX_KEY;
   currentGiftCard = cardLink || CARD_BASE_LINK;
 
-  currentPixPayload = generatePixPayload(currentGiftPix, price || 0, 'Noemi e Gustavo', 'Sao Paulo');
+  try {
+    currentPixPayload = generatePixPayload(currentGiftPix, v, 'Noemi e Gustavo', 'Sao Paulo');
+  } catch(e) {
+    currentPixPayload = null;
+    console.error('PIX payload error:', e);
+  }
 
+  const priceLabel = v > 0 ? 'R$ ' + v.toFixed(2).replace('.', ',') : 'Valor livre';
   document.getElementById('modal-gift-name').textContent  = giftName;
-  document.getElementById('modal-gift-price').textContent =
-    price > 0 ? 'R$ ' + price.toFixed(2).replace('.', ',') : 'Valor livre';
-  document.getElementById('pix-amount').textContent       =
-    price > 0 ? 'R$ ' + price.toFixed(2).replace('.', ',') : 'À sua escolha';
-  document.getElementById('pix-code-preview').textContent = currentPixPayload;
+  document.getElementById('modal-gift-price').textContent = priceLabel;
+  document.getElementById('pix-amount').textContent       = v > 0 ? priceLabel : 'À sua escolha';
+  document.getElementById('pix-code-preview').textContent = currentPixPayload || currentGiftPix;
   document.getElementById('pix-key-value').textContent    = currentGiftPix;
   document.getElementById('card-payment-link').href       = currentGiftCard;
   showStep('method');
@@ -398,11 +406,29 @@ function showStep(name) {
 }
 function copyPix() {
   const text = currentPixPayload || currentGiftPix || PIX_KEY;
-  navigator.clipboard.writeText(text).then(() => {
-    const el = document.getElementById('pix-copied');
+  const el   = document.getElementById('pix-copied');
+
+  function onSuccess() {
     el.style.display = 'block';
     setTimeout(() => { el.style.display = 'none'; }, 3000);
-  });
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(onSuccess).catch(() => copyFallback(text, onSuccess));
+  } else {
+    copyFallback(text, onSuccess);
+  }
+}
+
+function copyFallback(text, onSuccess) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); onSuccess(); } catch(e) { console.error('copy failed', e); }
+  document.body.removeChild(ta);
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closePaymentModal(); closeRsvpOverlay(); }
