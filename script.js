@@ -29,7 +29,8 @@ async function initGuestData() {
   }
 }
 
-initGuestData();
+// Parallelizar chamadas independentes ao Supabase
+Promise.all([initGuestData(), initConfig(), initPhotos()]);
 
 // ===========================
 // SLIDESHOW HERO
@@ -87,10 +88,16 @@ setInterval(updateCountdown, 1000);
 // ===========================
 // NAVBAR
 // ===========================
+let _scrollRaf = false;
 window.addEventListener('scroll', () => {
-  document.getElementById('navbar').style.boxShadow =
-    window.scrollY > 40 ? '0 2px 24px rgba(0,0,0,0.07)' : 'none';
-});
+  if (_scrollRaf) return;
+  _scrollRaf = true;
+  requestAnimationFrame(() => {
+    document.getElementById('navbar').style.boxShadow =
+      window.scrollY > 40 ? '0 2px 24px rgba(0,0,0,0.07)' : 'none';
+    _scrollRaf = false;
+  });
+}, { passive: true });
 function toggleMenu() {
   document.querySelector('.nav-links').classList.toggle('open');
 }
@@ -279,7 +286,6 @@ async function initConfig() {
     } catch(e) {}
   }
 }
-initConfig();
 
 // Presentes
 let currentGiftPix     = null;
@@ -356,7 +362,18 @@ async function initGifts() {
       </div>`;
   }).join('');
 }
-initGifts();
+// Lazy load: só busca presentes quando a seção entrar na tela
+let giftsLoaded = false;
+const giftsObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !giftsLoaded) {
+    giftsLoaded = true;
+    giftsObserver.disconnect();
+    initGifts();
+  }
+}, { rootMargin: '200px' });
+const giftsSection = document.getElementById('gifts-section');
+if (giftsSection) giftsObserver.observe(giftsSection);
+else initGifts(); // fallback
 
 function escHtml(s) {
   if (!s) return '';
@@ -533,7 +550,6 @@ async function initPhotos() {
     }
   });
 }
-initPhotos();
 
 // ===========================
 // RECADOS
