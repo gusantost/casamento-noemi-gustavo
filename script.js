@@ -300,8 +300,14 @@ function generatePixPayload(pixKey, valor, nome, cidade) {
   function clean(s) {
     return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9 ]/g, '');
   }
+  function normalizeKey(k) {
+    const t = k.trim();
+    if (/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(t))       return t.replace(/[.\-]/g, '');  // CPF
+    if (/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/.test(t)) return t.replace(/[.\-\/]/g, ''); // CNPJ
+    return t;
+  }
   const v      = parseFloat(valor) || 0;
-  const key    = pixKey.trim();
+  const key    = normalizeKey(pixKey);
   const mai    = f('26', f('00', 'br.gov.bcb.pix') + f('01', key));
   const amount = v > 0 ? f('54', v.toFixed(2)) : '';
   const add    = f('62', f('05', '***'));
