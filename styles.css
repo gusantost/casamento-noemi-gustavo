@@ -881,7 +881,7 @@ body {
 }
 
 .gift-price {
-  font-family: var(--font-serif);
+  font-family: var(--font-cinzel);
   font-size: 1.4rem;
   color: var(--green);
   font-weight: 300;
@@ -1176,7 +1176,7 @@ body {
 }
 
 .modal-price {
-  font-family: var(--font-serif);
+  font-family: var(--font-cinzel);
   font-size: 1.2rem;
   color: var(--green);
   font-weight: 300;
