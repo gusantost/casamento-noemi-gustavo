@@ -372,18 +372,35 @@ function openPaymentModal(giftName, price, pixKey, cardLink) {
   currentGiftPix  = pixKey  || PIX_KEY;
   currentGiftCard = cardLink || CARD_BASE_LINK;
 
-  try {
-    currentPixPayload = generatePixPayload(currentGiftPix, v, 'Noemi e Gustavo', 'Sao Paulo');
-  } catch(e) {
+  if (v > 0) {
+    try {
+      currentPixPayload = generatePixPayload(currentGiftPix, v, 'Noemi e Gustavo', 'Sao Paulo');
+    } catch(e) {
+      currentPixPayload = null;
+      console.error('PIX payload error:', e);
+    }
+  } else {
     currentPixPayload = null;
-    console.error('PIX payload error:', e);
   }
 
   const priceLabel = v > 0 ? 'R$ ' + v.toFixed(2).replace('.', ',') : 'Valor livre';
   document.getElementById('modal-gift-name').textContent  = giftName;
   document.getElementById('modal-gift-price').textContent = priceLabel;
-  document.getElementById('pix-amount').textContent       = v > 0 ? priceLabel : 'À sua escolha';
-  document.getElementById('pix-code-preview').textContent = currentPixPayload || currentGiftPix;
+
+  // Alternar modo PIX: código EMV (valor fixo) vs chave simples (valor livre)
+  const modeCode = document.getElementById('pix-mode-code');
+  const modeKey  = document.getElementById('pix-mode-key');
+  if (currentPixPayload) {
+    modeCode.style.display = '';
+    modeKey.style.display  = 'none';
+    document.getElementById('pix-amount').textContent       = priceLabel;
+    document.getElementById('pix-code-preview').textContent = currentPixPayload;
+    document.getElementById('pix-key-value').textContent    = currentGiftPix;
+  } else {
+    modeCode.style.display = 'none';
+    modeKey.style.display  = '';
+    document.getElementById('pix-key-free').textContent = currentGiftPix;
+  }
   document.getElementById('pix-key-value').textContent    = currentGiftPix;
   document.getElementById('card-payment-link').href       = currentGiftCard;
   showStep('method');
@@ -402,7 +419,10 @@ function goBack()              { showStep('method'); }
 function showStep(name) {
   document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
   document.getElementById('step-' + name).classList.add('active');
-  document.getElementById('pix-copied').style.display = 'none';
+  ['pix-copied','pix-key-copied'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 }
 function copyPix() {
   const text = currentPixPayload || currentGiftPix || PIX_KEY;
@@ -417,6 +437,19 @@ function copyPix() {
     navigator.clipboard.writeText(text).then(onSuccess).catch(() => copyFallback(text, onSuccess));
   } else {
     copyFallback(text, onSuccess);
+  }
+}
+
+function copyPixKey() {
+  const el = document.getElementById('pix-key-copied');
+  function onSuccess() {
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 3000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(currentGiftPix || PIX_KEY).then(onSuccess).catch(() => copyFallback(currentGiftPix || PIX_KEY, onSuccess));
+  } else {
+    copyFallback(currentGiftPix || PIX_KEY, onSuccess);
   }
 }
 

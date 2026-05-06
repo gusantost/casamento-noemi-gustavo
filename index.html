@@ -315,18 +315,33 @@
         </div>
       </div>
       <div id="step-pix" class="modal-step">
-        <p class="modal-subtitle">PIX Copia e Cola</p>
-        <div class="pix-box">
-          <p id="pix-amount" class="pix-amount">R$ —</p>
-          <div class="pix-code-wrap">
-            <p id="pix-code-preview" class="pix-code-preview">—</p>
+        <!-- Modo: valor fixo (presente com preço) -->
+        <div id="pix-mode-code">
+          <p class="modal-subtitle">PIX Copia e Cola</p>
+          <div class="pix-box">
+            <p id="pix-amount" class="pix-amount">R$ —</p>
+            <div class="pix-code-wrap">
+              <p id="pix-code-preview" class="pix-code-preview">—</p>
+            </div>
+            <button class="btn-copy-pix" onclick="copyPix()">Copiar código PIX</button>
+            <p id="pix-copied" style="display:none;color:var(--green);font-size:.78rem;margin-top:10px;">✓ Copiado! Cole no app do seu banco em PIX → Copia e Cola.</p>
+            <p class="pix-note">O valor já vem preenchido automaticamente.</p>
+            <div class="pix-key-ref">
+              <span class="pix-label-small">Ou use a chave:</span>
+              <span id="pix-key-value" class="pix-key-small">—</span>
+            </div>
           </div>
-          <button class="btn-copy-pix" onclick="copyPix()">Copiar código PIX</button>
-          <p id="pix-copied" style="display:none;color:var(--green);font-size:.78rem;margin-top:10px;">✓ Copiado! Cole no app do seu banco.</p>
-          <p class="pix-note">O valor já vem preenchido automaticamente.</p>
-          <div class="pix-key-ref">
-            <span class="pix-label-small">Ou use a chave:</span>
-            <span id="pix-key-value" class="pix-key-small">—</span>
+        </div>
+        <!-- Modo: valor livre -->
+        <div id="pix-mode-key" style="display:none;">
+          <p class="modal-subtitle">PIX — Chave</p>
+          <div class="pix-box">
+            <p class="pix-note" style="margin-bottom:14px;">Copie a chave abaixo e cole no seu banco. Você escolhe o valor que quiser presentear.</p>
+            <div class="pix-code-wrap">
+              <p id="pix-key-free" class="pix-code-preview" style="font-size:.9rem;">—</p>
+            </div>
+            <button class="btn-copy-pix" onclick="copyPixKey()">Copiar chave PIX</button>
+            <p id="pix-key-copied" style="display:none;color:var(--green);font-size:.78rem;margin-top:10px;">✓ Copiado! Cole no campo Chave PIX do seu banco.</p>
           </div>
         </div>
         <button class="btn-back" onclick="goBack()">← Voltar</button>
