@@ -392,9 +392,11 @@ function openPaymentModal(giftName, price, pixKey, cardLink) {
   if (v > 0) {
     try {
       currentPixPayload = generatePixPayload(currentGiftPix, v, 'Noemi e Gustavo', 'Sao Paulo');
+      console.log('[PIX] chave:', currentGiftPix);
+      console.log('[PIX] payload:', currentPixPayload);
     } catch(e) {
       currentPixPayload = null;
-      console.error('PIX payload error:', e);
+      console.error('[PIX] Erro ao gerar payload:', e);
     }
   } else {
     currentPixPayload = null;
