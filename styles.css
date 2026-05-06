@@ -398,7 +398,7 @@ body {
 
 .count-item span {
   display: block;
-  font-family: var(--font-serif);
+  font-family: var(--font-cinzel);
   font-size: clamp(3rem, 6vw, 5.5rem);
   font-weight: 300;
   color: var(--text);
@@ -814,7 +814,8 @@ body {
 .gifts-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 16px;
   margin-bottom: 48px;
 }
 
@@ -1835,7 +1836,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 400;
-  background: #ffffff;
+  background: var(--off-white);
   overflow-y: auto;
   animation: slideUp 0.35s ease;
 }
