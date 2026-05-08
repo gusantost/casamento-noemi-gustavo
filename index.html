@@ -28,11 +28,11 @@
   <nav id="navbar">
     <a href="#inicio" class="nav-logo"><img src="logo-ng.png" alt="NG" class="nav-logo-img" /></a>
     <ul class="nav-links">
-      <li><a href="#inicio">Início</a></li>
+      <li><a href="#" onclick="document.querySelector('.nav-links').classList.remove('open'); window.scrollTo({top:0,behavior:'smooth'}); return false;">Início</a></li>
       <li><a href="#historia">Nossa História</a></li>
       <li><a href="#cerimonia">Cerimônia</a></li>
       <li><a href="#" onclick="openGiftsSection(); return false;">Presentes</a></li>
-      <li><a href="#galeria">Galeria</a></li>
+      <li><a href="#" onclick="document.querySelector('.nav-links').classList.remove('open'); openGallery(); return false;">Galeria</a></li>
       <li><a href="#" onclick="openRsvpOverlay(); return false;">Confirmar Presença</a></li>
     </ul>
     <div class="nav-mobile-actions">
