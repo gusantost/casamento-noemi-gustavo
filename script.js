@@ -548,9 +548,21 @@ async function initPhotos() {
     const wrap = document.getElementById(`story-${n}-photo-wrap`);
     if (!wrap) return;
     const photos = bySlot[`timeline_${n}`];
-    if (photos && photos.length) {
+    if (!photos || !photos.length) return;
+    wrap.classList.remove('placeholder-photo');
+    if (photos.length === 1) {
       wrap.innerHTML = `<img src="${photos[0].url}" alt="${esc(photos[0].label || 'Nossa história')}" />`;
-      wrap.classList.remove('placeholder-photo');
+    } else {
+      wrap.innerHTML = photos.map((p, i) =>
+        `<img class="tl-slide${i === 0 ? ' active' : ''}" src="${esc(p.url)}" alt="${esc(p.label || 'Nossa história')}" loading="lazy" />`
+      ).join('');
+      let cur = 0;
+      setInterval(() => {
+        const slides = wrap.querySelectorAll('.tl-slide');
+        slides[cur].classList.remove('active');
+        cur = (cur + 1) % slides.length;
+        slides[cur].classList.add('active');
+      }, 4000);
     }
   });
 }
