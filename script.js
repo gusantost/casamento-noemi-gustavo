@@ -550,18 +550,23 @@ async function initPhotos() {
     const photos = bySlot[`timeline_${n}`];
     if (!photos || !photos.length) return;
     wrap.classList.remove('placeholder-photo');
-    if (photos.length === 1) {
-      wrap.innerHTML = `<img src="${photos[0].url}" alt="${esc(photos[0].label || 'Nossa história')}" />`;
-    } else {
-      wrap.innerHTML = photos.map((p, i) =>
-        `<img class="tl-slide${i === 0 ? ' active' : ''}" src="${esc(p.url)}" alt="${esc(p.label || 'Nossa história')}" loading="lazy" />`
-      ).join('');
+    const img = document.createElement('img');
+    img.src = photos[0].url;
+    img.alt = photos[0].label || 'Nossa história';
+    img.style.transition = 'opacity 0.6s ease';
+    wrap.innerHTML = '';
+    wrap.appendChild(img);
+
+    if (photos.length > 1) {
+      photos.slice(1).forEach(p => { const i = new Image(); i.src = p.url; });
       let cur = 0;
       setInterval(() => {
-        const slides = wrap.querySelectorAll('.tl-slide');
-        slides[cur].classList.remove('active');
-        cur = (cur + 1) % slides.length;
-        slides[cur].classList.add('active');
+        cur = (cur + 1) % photos.length;
+        img.style.opacity = '0';
+        setTimeout(() => {
+          img.src = photos[cur].url;
+          img.style.opacity = '1';
+        }, 600);
       }, 4000);
     }
   });
