@@ -326,6 +326,37 @@ function generatePixPayload(pixKey, valor, nome, cidade) {
   return payload + crc.toString(16).toUpperCase().padStart(4, '0');
 }
 
+const GIFT_CARD_LINKS = {
+  'Jogo de Panelas Antiaderente': 'https://mpago.la/1cfLGTM',
+  'Jogo de Pratos':               'https://mpago.la/1YZCfpw',
+  'Taças de Cristal':             'https://mpago.la/1so3Efg',
+  'Jogo de Tigelas':              'https://mpago.la/2zbs2Qj',
+  'Conjunto de Facas':            'https://mpago.la/291tM3j',
+  'Toalha de Mesa':               'https://mpago.la/2r7yEdo',
+  'Jogo de Copos':                'https://mpago.la/2StoDF2',
+  'Travessa de Servir':           'https://mpago.la/1DeQegm',
+  'Air Fryer':                    'https://mpago.la/1DhHQtR',
+  'Batedeira Planetária':         'https://mpago.la/2vCeTys',
+  'Jogo de Talheres':             'https://mpago.la/1n9BXSg',
+  'Porta-Temperos':               'https://mpago.la/32pMSYx',
+  'Cafeteira Expresso':           'https://mpago.la/16L2x84',
+  'Liquidificador':               'https://mpago.la/2tAQMtK',
+  'Processador de Alimentos':     'https://mpago.la/2BY4Bz4',
+  'Micro-ondas':                  'https://mpago.la/1RdmoQv',
+  'Sanduicheira Grill':           'https://mpago.la/31Ro8ua',
+  'Aspirador de Pó':              'https://mpago.la/12HJF5S',
+  'Ferro a Vapor':                'https://mpago.la/2jYey7K',
+  'Ventilador Arno':              'https://mpago.la/18n3xGV',
+  'Jogo de Cama King':            'https://mpago.la/1GaF3jc',
+  'Jogo de Toalhas de Banho':     'https://mpago.la/2i3XMej',
+  'Fogão Electrolux 5 Bocas':     'https://mpago.la/1aASjZv',
+  'Geladeira Electrolux':         'https://mpago.la/1zzFHQr',
+  'Jogo de Lençol':               'https://mpago.la/2zNN5nd',
+  'Roupão de Banho':              'https://mpago.la/1D2uktP',
+  'Kit Toalhas Bordadas':         'https://mpago.la/1p6Y2iV',
+  'Almofadas Decorativas':        'https://mpago.la/1njVSwc',
+};
+
 async function initGifts() {
   const { data } = await sb.from('gifts').select('*').order('order').order('created_at');
   const grid = document.getElementById('gifts-grid');
@@ -351,7 +382,8 @@ async function initGifts() {
       : '';
     const bodyClass = g.image_url ? 'gift-item-body' : 'gift-item-no-img';
     const pixArg  = g.pix_key  ? `'${escJs(g.pix_key)}'`  : 'null';
-    const cardArg = g.card_link ? `'${escJs(g.card_link)}'` : 'null';
+    const cardLink = g.card_link || GIFT_CARD_LINKS[g.name] || null;
+    const cardArg  = cardLink ? `'${escJs(cardLink)}'` : 'null';
     return `
       <div class="gift-item">
         ${imgHtml}
