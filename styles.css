@@ -1727,6 +1727,10 @@ body {
 .member-status.confirmed { color: #3a7a44; border-color: #3a7a44; }
 .member-status.declined  { color: #a04040; border-color: #a04040; }
 
+.member-highlighted { background: rgba(201,169,110,0.08); border-left: 3px solid var(--gold); padding-left: 12px; margin-left: -3px; }
+.member-highlighted .member-name { color: #1a1a1a; font-weight: 500; }
+.family-others-label { font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(0,0,0,0.38); margin: 16px 0 4px; padding-top: 14px; border-top: 1px solid rgba(0,0,0,0.08); }
+
 .member-actions { display: flex; gap: 8px; }
 
 .btn-confirm, .btn-decline {
@@ -1848,7 +1852,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 400;
-  background: var(--off-white);
+  background: #cec6ba;
   overflow-y: auto;
   animation: slideUp 0.35s ease;
 }
@@ -1863,8 +1867,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 20px 48px;
-  background: var(--white);
-  border-bottom: 1px solid rgba(0,0,0,0.07);
+  background: #bfb7ab;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
   flex-shrink: 0;
 }
 

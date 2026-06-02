@@ -157,19 +157,30 @@ function searchGuest() {
   const words = input.split(/\s+/).filter(w => w.length > 0);
   if (input.length < 2 || words.length === 0) { box.style.display = 'none'; return; }
   const queryWords = words.map(normalize);
-  const matchedGroups = [];
+
+  // Encontra os membros individuais que batem com a busca
+  const matches = [];
   for (const group of guestData) {
     for (const member of group.members) {
-      const memberNorm = normalize(member.name);
-      const allMatch   = queryWords.every(w => memberNorm.includes(w));
-      if (allMatch) { matchedGroups.push(group); break; }
+      const allMatch = queryWords.every(w => normalize(member.name).includes(w));
+      if (allMatch) matches.push({ group, member });
     }
   }
+
   box.style.display = 'block';
-  if (matchedGroups.length === 0) {
+  if (matches.length === 0) {
     box.innerHTML = `<div class="family-not-found"><p>Nome não encontrado na lista.<br />Verifique a grafia ou entre em contato com os noivos.</p></div>`;
+    return;
+  }
+
+  // Verifica se os matches são de famílias diferentes
+  const uniqueFamilies = [...new Set(matches.map(m => m.group.family))];
+  if (uniqueFamilies.length > 1) {
+    // Múltiplas famílias — mostra picker
+    renderFamilyPicker(matches.map(m => m.group).filter((g, i, a) => a.findIndex(x => x.family === g.family) === i), box);
   } else {
-    renderFamilyPicker(matchedGroups, box);
+    // Mesma família — mostra direto com o membro em destaque
+    renderFamily(matches[0].group, box, matches[0].member.id);
   }
 }
 
@@ -185,12 +196,13 @@ function pickFamily(familyName) {
   if (group) renderFamily(group, document.getElementById('family-result'));
 }
 
-function renderFamily(group, box) {
+function renderFamily(group, box, highlightId) {
   const labels = { pending: 'Pendente', confirmed: 'Confirmado ✓', declined: 'Não irá comparecer' };
-  const rows = group.members.map(member => {
+
+  const renderRow = (member, highlight) => {
     const status = member.status || 'pending';
     return `
-      <div class="family-member-row">
+      <div class="family-member-row${highlight ? ' member-highlighted' : ''}">
         <span class="member-name">${esc(member.name)}</span>
         <span class="member-status ${status}">${labels[status]}</span>
         <div class="member-actions">
@@ -200,8 +212,18 @@ function renderFamily(group, box) {
             onclick="setStatus('${member.id}', 'declined', '${esc(group.family)}')">Não poderei ir</button>
         </div>
       </div>`;
-  }).join('');
-  box.innerHTML = `<p class="family-result-title">${esc(group.family)}</p>${rows}`;
+  };
+
+  const main   = highlightId ? group.members.find(m => m.id === highlightId) : null;
+  const others = highlightId ? group.members.filter(m => m.id !== highlightId) : group.members;
+
+  let html = main ? renderRow(main, true) : '';
+  if (others.length > 0) {
+    if (main) html += `<p class="family-others-label">Outras pessoas do seu convite</p>`;
+    html += others.map(m => renderRow(m, false)).join('');
+  }
+
+  box.innerHTML = `<p class="family-result-title">${esc(group.family)}</p>${html}`;
 }
 
 async function setStatus(memberId, status, familyName) {
