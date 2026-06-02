@@ -95,6 +95,9 @@
     .btn-delete { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--font); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
     .btn-delete:hover { border-color: var(--red); color: var(--red); }
 
+    .btn-edit { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--muted); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+    .btn-edit:hover { border-color: var(--gold); color: var(--gold); }
+    .inline-edit-input { background: rgba(255,255,255,0.06); border: 1px solid var(--gold); color: var(--text); font-family: var(--font); font-size: 0.88rem; padding: 4px 8px; outline: none; min-width: 160px; }
     .add-member-row { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
     .add-member-row input { flex: 1; padding: 8px 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); font-family: var(--font); font-size: 0.82rem; outline: none; transition: border-color 0.2s; }
     .add-member-row input:focus { border-color: var(--gold); }
@@ -234,7 +237,7 @@
         </div>
         <div id="add-family-form" class="add-family-form">
           <h4>Nova Família</h4>
-          <input type="text" id="new-family-name" placeholder="Ex: Família Silva"/>
+          <input type="text" id="new-family-name" placeholder="Ex: Família Silva" onkeydown="if(event.key==='Enter') addFamily()"/>
           <div class="form-actions">
             <button class="btn-sm" onclick="addFamily()">Adicionar</button>
             <button class="btn-sm outline" onclick="toggleAddFamilyForm()">Cancelar</button>
@@ -583,8 +586,11 @@
       el.innerHTML = familiesData.map(f => `
         <div class="family-card">
           <div class="family-card-header">
-            <div style="display:flex;align-items:center;">
-              <h3>${esc(f.name)}</h3>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div id="fn-${f.id}" style="display:flex;align-items:center;gap:8px;">
+                <h3>${esc(f.name)}</h3>
+                <button class="btn-edit" onclick="startEditFamily('${f.id}')">Editar</button>
+              </div>
               <span class="family-count">${f.members.length} ${f.members.length === 1 ? 'membro' : 'membros'}</span>
             </div>
             <button class="btn-delete" onclick="deleteFamily('${f.id}','${esc(f.name)}')">Excluir família</button>
@@ -592,12 +598,15 @@
           <div class="family-card-body">
             ${f.members.map(m => `
               <div class="guest-row">
-                <span class="guest-name">${esc(m.name)}</span>
+                <div id="gn-${m.id}" style="display:flex;align-items:center;gap:8px;flex:1;">
+                  <span class="guest-name">${esc(m.name)}</span>
+                  <button class="btn-edit" onclick="startEditGuest('${m.id}')">Editar</button>
+                </div>
                 <span class="status-badge ${m.status}">${statusLabel(m.status)}</span>
                 <button class="btn-delete" onclick="deleteGuest('${m.id}')">Remover</button>
               </div>`).join('')}
             <div class="add-member-row">
-              <input type="text" id="nm-${f.id}" placeholder="Nome do convidado"/>
+              <input type="text" id="nm-${f.id}" placeholder="Nome do convidado" onkeydown="if(event.key==='Enter') addGuest('${f.id}')"/>
               <button class="btn-sm" onclick="addGuest('${f.id}')">Adicionar</button>
             </div>
           </div>
@@ -643,6 +652,58 @@
       if (!confirm('Excluir "' + name + '" e todos os membros?')) return;
       await sb.from('families').delete().eq('id', id);
       loadFamilies();
+    }
+
+    function startEditFamily(id) {
+      const f = familiesData.find(f => f.id === id);
+      if (!f) return;
+      const el = document.getElementById('fn-' + id);
+      el.innerHTML = `
+        <input type="text" id="edit-fn-${id}" class="inline-edit-input" onkeydown="if(event.key==='Enter') saveFamily('${id}'); if(event.key==='Escape') renderFamilies();"/>
+        <button class="btn-sm" onclick="saveFamily('${id}')">Salvar</button>
+        <button class="btn-sm outline" onclick="renderFamilies()">Cancelar</button>`;
+      const inp = document.getElementById('edit-fn-' + id);
+      inp.value = f.name;
+      inp.focus();
+      inp.select();
+    }
+
+    async function saveFamily(id) {
+      const inp = document.getElementById('edit-fn-' + id);
+      const name = inp.value.trim();
+      if (!name) return;
+      await sb.from('families').update({ name }).eq('id', id);
+      const f = familiesData.find(f => f.id === id);
+      if (f) f.name = name;
+      renderFamilies();
+    }
+
+    function startEditGuest(id) {
+      const group = familiesData.find(f => f.members.some(m => m.id === id));
+      const member = group && group.members.find(m => m.id === id);
+      if (!member) return;
+      const el = document.getElementById('gn-' + id);
+      el.innerHTML = `
+        <input type="text" id="edit-gn-${id}" class="inline-edit-input" onkeydown="if(event.key==='Enter') saveGuest('${id}'); if(event.key==='Escape') renderFamilies();"/>
+        <button class="btn-sm" onclick="saveGuest('${id}')">Salvar</button>
+        <button class="btn-sm outline" onclick="renderFamilies()">Cancelar</button>`;
+      const inp = document.getElementById('edit-gn-' + id);
+      inp.value = member.name;
+      inp.focus();
+      inp.select();
+    }
+
+    async function saveGuest(id) {
+      const inp = document.getElementById('edit-gn-' + id);
+      const name = inp.value.trim();
+      if (!name) return;
+      await sb.from('guests').update({ name }).eq('id', id);
+      const group = familiesData.find(f => f.members.some(m => m.id === id));
+      if (group) {
+        const member = group.members.find(m => m.id === id);
+        if (member) member.name = name;
+      }
+      renderFamilies();
     }
 
     // RECADOS
