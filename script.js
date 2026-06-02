@@ -152,10 +152,11 @@ function normalize(str) {
 }
 
 function searchGuest() {
-  const input = document.getElementById('guest-search-input').value.trim();
+  const raw   = document.getElementById('guest-search-input').value;
+  const input = raw.trim();
   const box   = document.getElementById('family-result');
   const words = input.split(/\s+/).filter(w => w.length > 0);
-  if (input.length < 2 || words.length === 0) { box.style.display = 'none'; return; }
+  if (raw.length < 4 || words.length === 0) { box.style.display = 'none'; return; }
   const queryWords = words.map(normalize);
 
   // Encontra os membros individuais que batem com a busca
