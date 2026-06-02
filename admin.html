@@ -44,7 +44,9 @@
     .tab-panel.active { display: block; }
 
     /* STATS */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 40px; }
+    .btn-child { font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: var(--muted); transition: all 0.2s; white-space: nowrap; }
+    .btn-child.active { border-color: #f0a500; background: rgba(240,165,0,0.12); color: #f0a500; }
     .stat-card { background: var(--panel); border: 1px solid var(--border); padding: 28px 24px; text-align: center; }
     .stat-card span { display: block; font-size: 2.8rem; font-weight: 300; line-height: 1; margin-bottom: 8px; }
     .stat-card label { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
@@ -224,6 +226,7 @@
           <div class="stat-card green"><span id="stat-confirmed">—</span><label>Confirmados</label></div>
           <div class="stat-card red"><span id="stat-declined">—</span><label>Não vão</label></div>
           <div class="stat-card"><span id="stat-pending">—</span><label>Pendentes</label></div>
+          <div class="stat-card"><span id="stat-children">—</span><label>Crianças</label></div>
         </div>
         <p class="section-title">Confirmações recentes</p>
         <div class="confirmed-list"><div id="confirmed-list-body"></div></div>
@@ -543,7 +546,10 @@
 
     // RESUMO
     async function loadResumo() {
-      const { data: guests } = await sb.from('guests').select('name, status');
+      const [{ data: guests }] = await Promise.all([
+        sb.from('guests').select('name, status'),
+        loadChildrenIds()
+      ]);
       if (!guests) return;
       const confirmed = guests.filter(g => g.status === 'confirmed');
       const declined  = guests.filter(g => g.status === 'declined');
@@ -552,6 +558,7 @@
       document.getElementById('stat-confirmed').textContent = confirmed.length;
       document.getElementById('stat-declined').textContent  = declined.length;
       document.getElementById('stat-pending').textContent   = pending.length;
+      document.getElementById('stat-children').textContent  = childrenIds.size;
       const listEl = document.getElementById('confirmed-list-body');
       listEl.innerHTML = confirmed.length === 0
         ? '<div class="empty-state">Nenhuma confirmação ainda.</div>'
@@ -564,10 +571,27 @@
 
     // CONVIDADOS
     let familiesData = [];
+    let childrenIds  = new Set();
+
+    async function loadChildrenIds() {
+      const { data } = await sb.from('site_config').select('value').eq('key','children_ids').single();
+      childrenIds = new Set(data ? JSON.parse(data.value || '[]') : []);
+    }
+
+    async function toggleChild(guestId) {
+      if (childrenIds.has(guestId)) childrenIds.delete(guestId);
+      else childrenIds.add(guestId);
+      await sb.from('site_config').upsert({ key: 'children_ids', value: JSON.stringify([...childrenIds]) });
+      renderFamilies();
+      const el = document.getElementById('stat-children');
+      if (el) el.textContent = childrenIds.size;
+    }
+
     async function loadFamilies() {
       const [{ data: families }, { data: guests }] = await Promise.all([
         sb.from('families').select('id, name').order('name'),
-        sb.from('guests').select('id, family_id, name, status')
+        sb.from('guests').select('id, family_id, name, status'),
+        loadChildrenIds()
       ]);
       if (!families) return;
       familiesData = families.map(f => ({
@@ -602,6 +626,9 @@
                   <span class="guest-name">${esc(m.name)}</span>
                   <button class="btn-edit" onclick="startEditGuest('${m.id}')">Editar</button>
                 </div>
+                <button class="btn-child ${childrenIds.has(m.id) ? 'active' : ''}" onclick="toggleChild('${m.id}')">
+                  ${childrenIds.has(m.id) ? '🧒 Criança' : 'Criança?'}
+                </button>
                 <span class="status-badge ${m.status}">${statusLabel(m.status)}</span>
                 <button class="btn-delete" onclick="deleteGuest('${m.id}')">Remover</button>
               </div>`).join('')}
