@@ -1659,7 +1659,7 @@ body {
   font-size: 0.62rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(0,0,0,0.4);
+  color: rgba(0,0,0,0.7);
   margin-bottom: 16px;
 }
 
@@ -1676,7 +1676,7 @@ body {
   transition: border-color 0.2s;
 }
 
-.guest-search-row input::placeholder { color: rgba(0,0,0,0.28); }
+.guest-search-row input::placeholder { color: rgba(0,0,0,0.5); }
 .guest-search-row input:focus { border-bottom-color: var(--gold); }
 
 /* Resultado família completa */
@@ -1852,7 +1852,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 400;
-  background: #cec6ba;
+  background: var(--off-white);
   overflow-y: auto;
   animation: slideUp 0.35s ease;
 }
@@ -1867,8 +1867,8 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 20px 48px;
-  background: #bfb7ab;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  background: var(--white);
+  border-bottom: 1px solid rgba(0,0,0,0.07);
   flex-shrink: 0;
 }
 
@@ -1939,13 +1939,13 @@ body {
 
 .rsvp-overlay-deadline {
   font-size: 0.75rem;
-  color: rgba(0,0,0,0.38);
+  color: rgba(0,0,0,0.6);
   letter-spacing: 0.08em;
   margin-bottom: 56px;
 }
 
 .rsvp-overlay-deadline strong {
-  color: rgba(0,0,0,0.6);
+  color: rgba(0,0,0,0.8);
   font-weight: 400;
 }
 
