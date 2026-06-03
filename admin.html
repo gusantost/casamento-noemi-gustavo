@@ -99,6 +99,10 @@
 
     .btn-edit { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--muted); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
     .btn-edit:hover { border-color: var(--gold); color: var(--gold); }
+    .guest-status-actions { display: flex; gap: 4px; }
+    .btn-status { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--muted); font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .btn-status.confirm:hover, .btn-status.confirm.active { border-color: var(--green); color: var(--green); background: rgba(74,153,90,0.1); }
+    .btn-status.decline:hover, .btn-status.decline.active { border-color: var(--red); color: var(--red); background: rgba(180,60,60,0.1); }
     .inline-edit-input { background: rgba(255,255,255,0.06); border: 1px solid var(--gold); color: var(--text); font-family: var(--font); font-size: 0.88rem; padding: 4px 8px; outline: none; min-width: 160px; }
     .add-member-row { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
     .add-member-row input { flex: 1; padding: 8px 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text); font-family: var(--font); font-size: 0.82rem; outline: none; transition: border-color 0.2s; }
@@ -629,6 +633,10 @@
                 <button class="btn-child ${childrenIds.has(m.id) ? 'active' : ''}" onclick="toggleChild('${m.id}')">
                   ${childrenIds.has(m.id) ? '🧒 Criança' : 'Criança?'}
                 </button>
+                <div class="guest-status-actions">
+                  <button class="btn-status confirm ${m.status === 'confirmed' ? 'active' : ''}" onclick="setAdminStatus('${m.id}', 'confirmed')">✓ Vai</button>
+                  <button class="btn-status decline ${m.status === 'declined' ? 'active' : ''}" onclick="setAdminStatus('${m.id}', 'declined')">✕ Não vai</button>
+                </div>
                 <span class="status-badge ${m.status}">${statusLabel(m.status)}</span>
                 <button class="btn-delete" onclick="deleteGuest('${m.id}')">Remover</button>
               </div>`).join('')}
@@ -679,6 +687,15 @@
       if (!confirm('Excluir "' + name + '" e todos os membros?')) return;
       await sb.from('families').delete().eq('id', id);
       loadFamilies();
+    }
+
+    async function setAdminStatus(memberId, status) {
+      await sb.from('guests').update({ status }).eq('id', memberId);
+      for (const f of familiesData) {
+        const m = f.members.find(m => m.id === memberId);
+        if (m) { m.status = status; break; }
+      }
+      renderFamilies();
     }
 
     function startEditFamily(id) {
