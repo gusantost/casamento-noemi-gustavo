@@ -52,6 +52,10 @@
     .stat-card label { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
     .stat-card.green span { color: var(--green); }
     .stat-card.red span { color: var(--red); }
+    .stat-card.clickable { cursor: pointer; transition: border-color 0.2s; }
+    .stat-card.clickable:hover { border-color: rgba(255,255,255,0.3); }
+    .stat-card.clickable.active { border-color: var(--gold); }
+    .stat-card.clickable.active label { color: var(--gold); }
 
     /* SECTION TITLE */
     .section-title { font-family: var(--title); font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
@@ -227,12 +231,12 @@
       <div id="panel-resumo" class="tab-panel active">
         <div class="stats-grid">
           <div class="stat-card"><span id="stat-total">—</span><label>Total</label></div>
-          <div class="stat-card green"><span id="stat-confirmed">—</span><label>Confirmados</label></div>
-          <div class="stat-card red"><span id="stat-declined">—</span><label>Não vão</label></div>
-          <div class="stat-card"><span id="stat-pending">—</span><label>Pendentes</label></div>
-          <div class="stat-card"><span id="stat-children">—</span><label>Crianças</label></div>
+          <div class="stat-card green clickable active" id="card-confirmed" onclick="showList('confirmed')"><span id="stat-confirmed">—</span><label>Confirmados</label></div>
+          <div class="stat-card red clickable"   id="card-declined" onclick="showList('declined')"><span id="stat-declined">—</span><label>Não vão</label></div>
+          <div class="stat-card clickable"        id="card-pending"  onclick="showList('pending')"><span id="stat-pending">—</span><label>Pendentes</label></div>
+          <div class="stat-card clickable"        id="card-children" onclick="showList('children')"><span id="stat-children">—</span><label>Crianças</label></div>
         </div>
-        <p class="section-title">Confirmações recentes</p>
+        <p class="section-title" id="list-title">Confirmados</p>
         <div class="confirmed-list"><div id="confirmed-list-body"></div></div>
       </div>
 
@@ -549,12 +553,16 @@
     }
 
     // RESUMO
+    let resumoGuests = [];
+    let activeListType = 'confirmed';
+
     async function loadResumo() {
       const [{ data: guests }] = await Promise.all([
-        sb.from('guests').select('name, status'),
+        sb.from('guests').select('id, name, status'),
         loadChildrenIds()
       ]);
       if (!guests) return;
+      resumoGuests = guests;
       const confirmed = guests.filter(g => g.status === 'confirmed');
       const declined  = guests.filter(g => g.status === 'declined');
       const pending   = guests.filter(g => g.status === 'pending');
@@ -563,14 +571,39 @@
       document.getElementById('stat-declined').textContent  = declined.length;
       document.getElementById('stat-pending').textContent   = pending.length;
       document.getElementById('stat-children').textContent  = childrenIds.size;
+      showList(activeListType);
+    }
+
+    function showList(type) {
+      activeListType = type;
+      document.querySelectorAll('.stat-card.clickable').forEach(c => c.classList.remove('active'));
+      const cardMap = { confirmed: 'card-confirmed', declined: 'card-declined', pending: 'card-pending', children: 'card-children' };
+      const titleMap = { confirmed: 'Confirmados', declined: 'Não vão', pending: 'Pendentes', children: 'Crianças' };
+      const card = document.getElementById(cardMap[type]);
+      if (card) card.classList.add('active');
+      document.getElementById('list-title').textContent = titleMap[type] || '';
+
+      let filtered;
+      if (type === 'children') {
+        filtered = resumoGuests.filter(g => childrenIds.has(g.id));
+      } else {
+        filtered = resumoGuests.filter(g => g.status === type);
+      }
+
+      const statusClass = { confirmed: 'confirmed', declined: 'declined', pending: 'pending', children: '' };
+      const badgeMap = { confirmed: 'Confirmado', declined: 'Não vai', pending: 'Pendente' };
+
       const listEl = document.getElementById('confirmed-list-body');
-      listEl.innerHTML = confirmed.length === 0
-        ? '<div class="empty-state">Nenhuma confirmação ainda.</div>'
-        : confirmed.map(g => `
-            <div class="confirmed-row">
-              <span>${esc(g.name)}</span>
-              <span class="status-badge confirmed">Confirmado</span>
-            </div>`).join('');
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<div class="empty-state">Nenhum convidado nesta categoria.</div>';
+        return;
+      }
+      listEl.innerHTML = filtered.map(g => {
+        const badge = type === 'children'
+          ? `<span class="status-badge ${g.status}">${statusLabel(g.status)}</span>`
+          : `<span class="status-badge ${statusClass[type]}">${badgeMap[type]}</span>`;
+        return `<div class="confirmed-row"><span>${esc(g.name)}</span>${badge}</div>`;
+      }).join('');
     }
 
     // CONVIDADOS
