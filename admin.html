@@ -690,10 +690,15 @@
     }
 
     async function setAdminStatus(memberId, status) {
-      await sb.from('guests').update({ status }).eq('id', memberId);
+      let newStatus = status;
       for (const f of familiesData) {
         const m = f.members.find(m => m.id === memberId);
-        if (m) { m.status = status; break; }
+        if (m) { if (m.status === status) newStatus = 'pending'; break; }
+      }
+      await sb.from('guests').update({ status: newStatus }).eq('id', memberId);
+      for (const f of familiesData) {
+        const m = f.members.find(m => m.id === memberId);
+        if (m) { m.status = newStatus; break; }
       }
       renderFamilies();
     }
