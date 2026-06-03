@@ -606,10 +606,13 @@
         return;
       }
       listEl.innerHTML = filtered.map(g => {
-        const badge = type === 'children'
+        const badge   = type === 'children'
           ? `<span class="status-badge ${g.status}">${statusLabel(g.status)}</span>`
           : `<span class="status-badge ${statusClass[type]}">${badgeMap[type]}</span>`;
-        return `<div class="confirmed-row"><span>${esc(g.name)}</span>${badge}</div>`;
+        const familia = g.families && g.families.name
+          ? `<span style="color:var(--muted);font-size:0.76rem;margin-left:10px;">${esc(g.families.name)}</span>`
+          : '';
+        return `<div class="confirmed-row"><span>${esc(g.name)}${familia}</span>${badge}</div>`;
       }).join('');
     }
 
