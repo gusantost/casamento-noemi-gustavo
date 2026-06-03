@@ -236,7 +236,10 @@
           <div class="stat-card clickable"        id="card-pending"  onclick="showList('pending')"><span id="stat-pending">—</span><label>Pendentes</label></div>
           <div class="stat-card clickable"        id="card-children" onclick="showList('children')"><span id="stat-children">—</span><label>Crianças</label></div>
         </div>
-        <p class="section-title" id="list-title">Confirmados</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <p class="section-title" id="list-title" style="margin-bottom:0;">Confirmados</p>
+          <button class="btn-add" onclick="downloadList()">↓ Baixar lista</button>
+        </div>
         <div class="confirmed-list"><div id="confirmed-list-body"></div></div>
       </div>
 
@@ -574,24 +577,28 @@
       showList(activeListType);
     }
 
+    function getFiltered(type) {
+      let list;
+      if (type === 'children') {
+        list = resumoGuests.filter(g => childrenIds.has(g.id));
+      } else {
+        list = resumoGuests.filter(g => g.status === type);
+      }
+      return list.slice().sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+    }
+
     function showList(type) {
       activeListType = type;
       document.querySelectorAll('.stat-card.clickable').forEach(c => c.classList.remove('active'));
-      const cardMap = { confirmed: 'card-confirmed', declined: 'card-declined', pending: 'card-pending', children: 'card-children' };
+      const cardMap  = { confirmed: 'card-confirmed', declined: 'card-declined', pending: 'card-pending', children: 'card-children' };
       const titleMap = { confirmed: 'Confirmados', declined: 'Não vão', pending: 'Pendentes', children: 'Crianças' };
       const card = document.getElementById(cardMap[type]);
       if (card) card.classList.add('active');
       document.getElementById('list-title').textContent = titleMap[type] || '';
 
-      let filtered;
-      if (type === 'children') {
-        filtered = resumoGuests.filter(g => childrenIds.has(g.id));
-      } else {
-        filtered = resumoGuests.filter(g => g.status === type);
-      }
-
-      const statusClass = { confirmed: 'confirmed', declined: 'declined', pending: 'pending', children: '' };
-      const badgeMap = { confirmed: 'Confirmado', declined: 'Não vai', pending: 'Pendente' };
+      const filtered = getFiltered(type);
+      const statusClass = { confirmed: 'confirmed', declined: 'declined', pending: 'pending' };
+      const badgeMap    = { confirmed: 'Confirmado', declined: 'Não vai', pending: 'Pendente' };
 
       const listEl = document.getElementById('confirmed-list-body');
       if (filtered.length === 0) {
@@ -604,6 +611,27 @@
           : `<span class="status-badge ${statusClass[type]}">${badgeMap[type]}</span>`;
         return `<div class="confirmed-row"><span>${esc(g.name)}</span>${badge}</div>`;
       }).join('');
+    }
+
+    function downloadList() {
+      const titleMap = { confirmed: 'Confirmados', declined: 'Não vão', pending: 'Pendentes', children: 'Crianças' };
+      const title    = titleMap[activeListType] || activeListType;
+      const filtered = getFiltered(activeListType);
+      const lines    = [
+        `Lista de Convidados — ${title}`,
+        `Noemi & Gustavo · 08.10.2026`,
+        `Gerado em: ${new Date().toLocaleString('pt-BR')}`,
+        `Total: ${filtered.length}`,
+        '',
+        ...filtered.map((g, i) => `${String(i + 1).padStart(3, ' ')}. ${g.name}`)
+      ];
+      const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `convidados-${activeListType}-${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
 
     // CONVIDADOS
