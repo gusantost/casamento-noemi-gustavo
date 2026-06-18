@@ -689,4 +689,6 @@ function handleDeepLink() {
     openGiftsSection();
   }
 }
-window.addEventListener('load', () => setTimeout(handleDeepLink, 150));
+// Roda imediatamente (DOM já carregado) e também no load como fallback
+handleDeepLink();
+window.addEventListener('load', handleDeepLink);
