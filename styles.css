@@ -36,6 +36,9 @@ body {
 /* ===========================
    NAVBAR
 =========================== */
+/* Offset para links de âncora não ficarem atrás da navbar fixa */
+#historia, #cerimonia, #recados, #gifts-section { scroll-margin-top: 80px; }
+
 #navbar {
   position: fixed;
   top: 0; left: 0; right: 0;

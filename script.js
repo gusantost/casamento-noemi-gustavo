@@ -674,3 +674,19 @@ document.querySelectorAll('.timeline-card, .info-card, .story-inner, .count-item
   el.classList.add('fade-up');
   observer.observe(el);
 });
+
+// ===========================
+// DEEP LINKS (slugs para PDF)
+// ===========================
+function handleDeepLink() {
+  const hash = window.location.hash;
+  if (!hash) return;
+  if (hash === '#confirmar') {
+    openRsvpOverlay();
+  } else if (hash === '#galeria') {
+    openGallery();
+  } else if (hash === '#presentes') {
+    openGiftsSection();
+  }
+}
+window.addEventListener('load', () => setTimeout(handleDeepLink, 150));
