@@ -156,7 +156,7 @@
         <h2 class="section-heading">O Grande Dia</h2>
       </div>
       <div class="hscroll-track" id="hscroll-track">
-        <div class="info-card info-card-large info-card-venue">
+        <div class="info-card info-card-large info-card-venue" style="cursor:pointer;" onclick="const l=document.getElementById('venue-maps-link'); if(l&&l.href) window.open(l.href,'_blank')">
           <img src="Jardim Riviera.png" alt="Jardim Riviera" class="venue-bg" />
           <div class="venue-overlay"></div>
           <div class="venue-content">
@@ -164,14 +164,14 @@
             <h3>Local do Evento</h3>
             <p id="venue-name-city">Jardim Riviera<br />João Pessoa — PB</p>
             <p class="info-detail" id="venue-datetime-text">08 de Outubro de 2026 · 15h00</p>
-            <a id="venue-maps-link" href="https://maps.google.com/?q=Jardim+Riviera+João+Pessoa+PB" target="_blank" class="btn-text venue-link">Ver no mapa →</a>
+            <a id="venue-maps-link" href="https://maps.google.com/?q=Jardim+Riviera+João+Pessoa+PB" target="_blank" class="btn-text venue-link" onclick="event.stopPropagation()">Ver no mapa →</a>
           </div>
         </div>
-        <div id="hcard-presentes" class="info-card">
+        <div id="hcard-presentes" class="info-card" style="cursor:pointer;" onclick="openGiftsSection()">
           <span class="info-num">02</span>
           <h3>Presentes</h3>
           <p>Sua presença já é o maior presente. Mas se quiser nos presentear, clique abaixo.</p>
-          <a href="#gifts-modal" class="btn-text" onclick="openGiftsSection()">Ver lista →</a>
+          <a href="#gifts-modal" class="btn-text" onclick="event.stopPropagation(); openGiftsSection()">Ver lista →</a>
         </div>
         <div class="info-card info-card-photo" onclick="openGallery()" style="cursor:pointer;">
           <img src="Foto Site.jpg" alt="Casal" />
@@ -181,11 +181,11 @@
             <span class="btn-text" style="color:rgba(255,255,255,0.7);margin-top:4px;">Ver fotos →</span>
           </div>
         </div>
-        <div class="info-card">
+        <div class="info-card" style="cursor:pointer;" onclick="document.getElementById('recados').scrollIntoView({behavior:'smooth'})">
           <span class="info-num">04</span>
           <h3>Recados</h3>
           <p>Deixe uma mensagem especial para os noivos.</p>
-          <a href="#recados" class="btn-text">Escrever recado →</a>
+          <a href="#recados" class="btn-text" onclick="event.stopPropagation()">Escrever recado →</a>
         </div>
       </div>
     </div>
