@@ -580,8 +580,11 @@ async function initPhotos() {
   const preGrid = document.getElementById('gallery-prewedding-grid');
   if (preGrid) {
     const photos = bySlot.gallery_prewedding || [];
-    preGrid.innerHTML = photos.map(p =>
-      `<div class="gallery-item"><img src="${p.url}" alt="${esc(p.label || 'Pré-wedding')}" loading="lazy" /></div>`
+    preGrid.innerHTML = photos.map((p, i) =>
+      `<div class="gallery-item">
+        <img src="${p.url}" alt="${esc(p.label || 'Pré-wedding')}" loading="lazy" />
+        <button class="gallery-download" onclick="downloadPhoto('${p.url}','noemi-gustavo-prewedding-${i + 1}.jpg')">↓ Baixar</button>
+      </div>`
     ).join('');
   }
 
@@ -592,8 +595,11 @@ async function initPhotos() {
     const photos = bySlot.gallery_casamento || [];
     if (photos.length) {
       casSoon.style.display = 'none';
-      casGrid.innerHTML = photos.map(p =>
-        `<div class="gallery-item"><img src="${p.url}" alt="${esc(p.label || 'Casamento')}" loading="lazy" /></div>`
+      casGrid.innerHTML = photos.map((p, i) =>
+        `<div class="gallery-item">
+          <img src="${p.url}" alt="${esc(p.label || 'Casamento')}" loading="lazy" />
+          <button class="gallery-download" onclick="downloadPhoto('${p.url}','noemi-gustavo-casamento-${i + 1}.jpg')">↓ Baixar</button>
+        </div>`
       ).join('');
     }
   }
@@ -674,6 +680,23 @@ document.querySelectorAll('.timeline-card, .info-card, .story-inner, .count-item
   el.classList.add('fade-up');
   observer.observe(el);
 });
+
+// ===========================
+// DOWNLOAD DE FOTOS
+// ===========================
+async function downloadPhoto(url, filename) {
+  try {
+    const res  = await fetch(url);
+    const blob = await res.blob();
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  } catch {
+    window.open(url, '_blank');
+  }
+}
 
 // ===========================
 // DEEP LINKS (slugs para PDF)
