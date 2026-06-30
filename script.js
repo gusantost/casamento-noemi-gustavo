@@ -579,11 +579,11 @@ async function initPhotos() {
   // Galeria pré-wedding
   const preGrid = document.getElementById('gallery-prewedding-grid');
   if (preGrid) {
-    const photos = bySlot.gallery_prewedding || [];
-    preGrid.innerHTML = photos.map((p, i) =>
-      `<div class="gallery-item">
+    galleryPhotosPrewedding = bySlot.gallery_prewedding || [];
+    preGrid.innerHTML = galleryPhotosPrewedding.map((p, i) =>
+      `<div class="gallery-item" onclick="openLightbox('prewedding',${i})">
         <img src="${p.url}" alt="${esc(p.label || 'Pré-wedding')}" loading="lazy" />
-        <button class="gallery-download" onclick="downloadPhoto('${p.url}','noemi-gustavo-prewedding-${i + 1}.jpg')">↓ Baixar</button>
+        <button class="gallery-download" onclick="event.stopPropagation();downloadPhoto('${p.url}','noemi-gustavo-prewedding-${i + 1}.jpg')">↓ Baixar</button>
       </div>`
     ).join('');
   }
@@ -592,13 +592,13 @@ async function initPhotos() {
   const casGrid   = document.getElementById('gallery-casamento-grid');
   const casSoon   = document.getElementById('gallery-casamento-soon');
   if (casGrid && casSoon) {
-    const photos = bySlot.gallery_casamento || [];
-    if (photos.length) {
+    galleryPhotosCasamento = bySlot.gallery_casamento || [];
+    if (galleryPhotosCasamento.length) {
       casSoon.style.display = 'none';
-      casGrid.innerHTML = photos.map((p, i) =>
-        `<div class="gallery-item">
+      casGrid.innerHTML = galleryPhotosCasamento.map((p, i) =>
+        `<div class="gallery-item" onclick="openLightbox('casamento',${i})">
           <img src="${p.url}" alt="${esc(p.label || 'Casamento')}" loading="lazy" />
-          <button class="gallery-download" onclick="downloadPhoto('${p.url}','noemi-gustavo-casamento-${i + 1}.jpg')">↓ Baixar</button>
+          <button class="gallery-download" onclick="event.stopPropagation();downloadPhoto('${p.url}','noemi-gustavo-casamento-${i + 1}.jpg')">↓ Baixar</button>
         </div>`
       ).join('');
     }
@@ -679,6 +679,41 @@ const observer = new IntersectionObserver(entries => {
 document.querySelectorAll('.timeline-card, .info-card, .story-inner, .count-item').forEach(el => {
   el.classList.add('fade-up');
   observer.observe(el);
+});
+
+// ===========================
+// LIGHTBOX
+// ===========================
+let galleryPhotosPrewedding = [];
+let galleryPhotosCasamento  = [];
+let lightboxPhotos = [];
+let lightboxIndex  = 0;
+
+function openLightbox(album, index) {
+  lightboxPhotos = album === 'prewedding' ? galleryPhotosPrewedding : galleryPhotosCasamento;
+  lightboxIndex  = index;
+  document.getElementById('lightbox-img').src = lightboxPhotos[index].url;
+  document.getElementById('lightbox-counter').textContent = `${index + 1} / ${lightboxPhotos.length}`;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function lightboxNav(dir) {
+  lightboxIndex = (lightboxIndex + dir + lightboxPhotos.length) % lightboxPhotos.length;
+  document.getElementById('lightbox-img').src = lightboxPhotos[lightboxIndex].url;
+  document.getElementById('lightbox-counter').textContent = `${lightboxIndex + 1} / ${lightboxPhotos.length}`;
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'ArrowRight') lightboxNav(1);
+  if (e.key === 'ArrowLeft')  lightboxNav(-1);
+  if (e.key === 'Escape')     closeLightbox();
 });
 
 // ===========================

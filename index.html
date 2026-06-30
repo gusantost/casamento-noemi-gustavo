@@ -365,6 +365,15 @@
     </div>
   </div>
 
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕ Fechar</button>
+    <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation(); lightboxNav(-1)">&#8592;</button>
+    <img id="lightbox-img" class="lightbox-img" onclick="event.stopPropagation()" alt="Foto" />
+    <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation(); lightboxNav(1)">&#8594;</button>
+    <p class="lightbox-counter" id="lightbox-counter"></p>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
