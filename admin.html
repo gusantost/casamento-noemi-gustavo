@@ -220,6 +220,7 @@
         <button class="tab-btn" onclick="showTab('recados',this)">Recados</button>
         <button class="tab-btn" onclick="showTab('fotos',this)">Fotos</button>
         <button class="tab-btn" onclick="showTab('presentes',this)">Presentes</button>
+        <button class="tab-btn" onclick="showTab('padrinhos',this)">Padrinhos</button>
         <button class="tab-btn" onclick="showTab('config',this)">Configurações</button>
       </nav>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
@@ -400,6 +401,27 @@
         <div id="gifts-admin-list"></div>
       </div>
 
+      <!-- PADRINHOS -->
+      <div id="panel-padrinhos" class="tab-panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <p class="section-title" style="margin-bottom:0;">Guia dos Padrinhos</p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <p id="padrinhos-saved" style="display:none;font-size:0.78rem;color:var(--green);">✓ Salvo!</p>
+            <a href="/padrinhos.html" target="_blank" style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);text-decoration:none;">Ver página →</a>
+          </div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:32px;">Página acessível em <strong style="color:var(--text);">noemiegustavo.com/padrinhos</strong> — não está linkada no site principal.</p>
+
+        <div class="config-group" style="max-width:560px;">
+          <label>Texto de introdução</label>
+          <input type="text" id="pad-intro" placeholder="Preparamos algumas indicações para ajudar vocês..."/>
+        </div>
+
+        <div id="pad-sections"></div>
+
+        <button class="btn-primary" style="width:auto;display:inline-block;padding:12px 40px;margin-top:8px;" onclick="savePadrinhos()">Salvar Alterações</button>
+      </div>
+
       <!-- CONFIGURAÇÕES -->
       <div id="panel-config" class="tab-panel">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
@@ -552,6 +574,7 @@
       if (name === 'recados') loadAdminMessages();
       if (name === 'fotos') loadPhotos();
       if (name === 'presentes') loadGifts();
+      if (name === 'padrinhos') loadPadrinhos();
       if (name === 'config') loadConfig();
     }
 
@@ -820,6 +843,69 @@
         if (member) member.name = name;
       }
       renderFamilies();
+    }
+
+    // PADRINHOS
+    const PAD_CATS = [
+      { key: 'maquiagem', label: '💄 Maquiagem' },
+      { key: 'terno',     label: '🤵 Aluguel de Terno' },
+      { key: 'masculino', label: '✂️ Salão Masculino' },
+    ];
+    let padData = { intro: '', maquiagem: [], terno: [], masculino: [] };
+
+    async function loadPadrinhos() {
+      const { data } = await sb.from('site_config').select('value').eq('key','padrinhos').single();
+      padData = data ? JSON.parse(data.value || '{}') : {};
+      padData.maquiagem = padData.maquiagem || [];
+      padData.terno     = padData.terno     || [];
+      padData.masculino = padData.masculino || [];
+      if (document.getElementById('pad-intro')) document.getElementById('pad-intro').value = padData.intro || '';
+      renderPadSections();
+    }
+
+    function renderPadSections() {
+      const el = document.getElementById('pad-sections');
+      if (!el) return;
+      el.innerHTML = PAD_CATS.map(cat => `
+        <div style="margin-bottom:40px;">
+          <p class="config-section-title">${cat.label}</p>
+          <div id="pad-list-${cat.key}">
+            ${(padData[cat.key] || []).map((r, i) => `
+              <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);padding:16px 20px;margin-bottom:8px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 24px;">
+                  <div class="config-group" style="margin-bottom:12px;"><label>Nome</label><input type="text" value="${esc(r.nome||'')}" onchange="padData['${cat.key}'][${i}].nome=this.value"/></div>
+                  <div class="config-group" style="margin-bottom:12px;"><label>Telefone</label><input type="text" value="${esc(r.telefone||'')}" onchange="padData['${cat.key}'][${i}].telefone=this.value"/></div>
+                  <div class="config-group" style="margin-bottom:12px;"><label>Endereço</label><input type="text" value="${esc(r.endereco||'')}" onchange="padData['${cat.key}'][${i}].endereco=this.value"/></div>
+                  <div class="config-group" style="margin-bottom:12px;"><label>Instagram</label><input type="text" placeholder="@" value="${esc(r.instagram||'')}" onchange="padData['${cat.key}'][${i}].instagram=this.value"/></div>
+                  <div class="config-group" style="margin-bottom:12px;grid-column:1/-1;"><label>Site / Link</label><input type="url" value="${esc(r.link||'')}" onchange="padData['${cat.key}'][${i}].link=this.value"/></div>
+                  <div class="config-group" style="margin-bottom:0;grid-column:1/-1;"><label>Observação</label><input type="text" value="${esc(r.obs||'')}" placeholder="ex: pedir pacote noivas" onchange="padData['${cat.key}'][${i}].obs=this.value"/></div>
+                </div>
+                <div style="margin-top:12px;">
+                  <button class="btn-delete" onclick="removePadItem('${cat.key}',${i})">Remover</button>
+                </div>
+              </div>`).join('')}
+          </div>
+          <button class="btn-add" style="margin-top:8px;" onclick="addPadItem('${cat.key}')">+ Adicionar indicação</button>
+        </div>`).join('');
+    }
+
+    function addPadItem(catKey) {
+      padData[catKey] = padData[catKey] || [];
+      padData[catKey].push({ nome:'', endereco:'', telefone:'', instagram:'', link:'', obs:'' });
+      renderPadSections();
+    }
+
+    function removePadItem(catKey, index) {
+      padData[catKey].splice(index, 1);
+      renderPadSections();
+    }
+
+    async function savePadrinhos() {
+      padData.intro = document.getElementById('pad-intro').value.trim();
+      await sb.from('site_config').upsert({ key: 'padrinhos', value: JSON.stringify(padData) });
+      const el = document.getElementById('padrinhos-saved');
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 3000);
     }
 
     // RECADOS
