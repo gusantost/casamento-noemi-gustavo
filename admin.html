@@ -220,7 +220,7 @@
         <button class="tab-btn" onclick="showTab('recados',this)">Recados</button>
         <button class="tab-btn" onclick="showTab('fotos',this)">Fotos</button>
         <button class="tab-btn" onclick="showTab('presentes',this)">Presentes</button>
-        <button class="tab-btn" onclick="showTab('padrinhos',this)">Padrinhos</button>
+        <button class="tab-btn" onclick="showTab('padrinhos',this)">Cortejo</button>
         <button class="tab-btn" onclick="showTab('config',this)">Configurações</button>
       </nav>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
@@ -404,13 +404,13 @@
       <!-- PADRINHOS -->
       <div id="panel-padrinhos" class="tab-panel">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <p class="section-title" style="margin-bottom:0;">Guia dos Padrinhos</p>
+          <p class="section-title" style="margin-bottom:0;">Guia do Cortejo</p>
           <div style="display:flex;align-items:center;gap:12px;">
             <p id="padrinhos-saved" style="display:none;font-size:0.78rem;color:var(--green);">✓ Salvo!</p>
             <a href="/padrinhos.html" target="_blank" style="font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);text-decoration:none;">Ver página →</a>
           </div>
         </div>
-        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:32px;">Página acessível em <strong style="color:var(--text);">noemiegustavo.com/padrinhos</strong> — não está linkada no site principal.</p>
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:32px;">Página acessível em <strong style="color:var(--text);">noemiegustavo.com/padrinhos</strong> — não está linkada no site principal.<br>A seção de maquiagem está fixada na página; edite aqui apenas Terno e Salão Masculino.</p>
 
         <div class="config-group" style="max-width:560px;">
           <label>Texto de introdução</label>
@@ -847,16 +847,14 @@
 
     // PADRINHOS
     const PAD_CATS = [
-      { key: 'maquiagem', label: '💄 Maquiagem' },
       { key: 'terno',     label: '🤵 Aluguel de Terno' },
       { key: 'masculino', label: '✂️ Salão Masculino' },
     ];
-    let padData = { intro: '', maquiagem: [], terno: [], masculino: [] };
+    let padData = { intro: '', terno: [], masculino: [] };
 
     async function loadPadrinhos() {
       const { data } = await sb.from('site_config').select('value').eq('key','padrinhos').single();
       padData = data ? JSON.parse(data.value || '{}') : {};
-      padData.maquiagem = padData.maquiagem || [];
       padData.terno     = padData.terno     || [];
       padData.masculino = padData.masculino || [];
       if (document.getElementById('pad-intro')) document.getElementById('pad-intro').value = padData.intro || '';
