@@ -143,6 +143,26 @@
     .rec-obs { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); line-height: 1.7; font-style: italic; }
     .empty-cat { font-size: 0.82rem; color: var(--muted); font-style: italic; padding: 16px 0; }
 
+    /* ── DUO GRID (Iasmin + Sonaly) ── */
+    .duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 0; }
+    .duo-grid .studio-card { margin-bottom: 0; }
+    .duo-grid .ig-preview { padding: 14px 16px 0; }
+    .duo-grid .ig-grid { margin: 0 -16px; }
+    .duo-grid .studio-body { padding: 16px 16px 18px; }
+    .duo-grid .ig-username { font-size: 0.75rem; }
+    .duo-grid .ig-fullname { font-size: 0.65rem; }
+    .duo-grid .ig-stat-val { font-size: 0.74rem; }
+    .duo-grid .ig-stat-lbl { font-size: 0.5rem; }
+    .duo-grid .ig-bio { font-size: 0.72rem; margin-bottom: 12px; }
+    .duo-grid .ig-avatar-ring { width: 48px; height: 48px; }
+    .duo-contact { display: block; margin-top: 14px; padding: 10px 16px; background: var(--dark); color: #fff; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; text-align: center; transition: opacity 0.2s; }
+    .duo-contact:hover { opacity: 0.8; }
+    .duo-info { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+    .duo-info strong { color: var(--text); font-weight: 500; }
+    @media (max-width: 580px) {
+      .duo-grid { grid-template-columns: 1fr; }
+    }
+
     /* ── FOOTER ── */
     .page-footer { text-align: center; padding: 32px; border-top: 1px solid var(--border); font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
 
@@ -268,50 +288,97 @@
       </div>
     </div>
 
-    <!-- 3 · Adriana Guimarães Makeup -->
-    <div class="studio-card">
-      <div class="ig-preview">
-        <div class="ig-header">
-          <div class="ig-avatar-ring">
-            <div class="ig-avatar-inner"><img src="ig_photos/adriguimaraesmakeup_avatar.jpg" alt="Adri"/></div>
+    <!-- 3 · Iasmin + Sonaly (Studio Bruma) -->
+    <div class="duo-grid">
+
+      <!-- Iasmin -->
+      <div class="studio-card">
+        <div class="ig-preview">
+          <div class="ig-header">
+            <div class="ig-avatar-ring">
+              <div class="ig-avatar-inner"><img src="ig_photos/iasmin_avatar.jpg" alt="Iasmin"/></div>
+            </div>
+            <div class="ig-meta">
+              <p class="ig-username">iasminmarinho.art</p>
+              <p class="ig-name">Iasmin Marinho · Maquiagem</p>
+            </div>
+            <div class="ig-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><radialGradient id="ig3a" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="5%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs>
+                <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig3a)"/>
+                <circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.5" fill="none"/>
+                <circle cx="17.2" cy="6.8" r="1" fill="#fff"/>
+              </svg>
+            </div>
           </div>
-          <div class="ig-meta">
-            <p class="ig-username">adriguimaraesmakeup</p>
-            <p class="ig-name">Adriana Guimarães Makeup</p>
+          <div class="ig-stats">
+            <div class="ig-stat"><p class="ig-stat-val">455</p><p class="ig-stat-lbl">posts</p></div>
+            <div class="ig-stat"><p class="ig-stat-val">9.282</p><p class="ig-stat-lbl">seguidores</p></div>
+            <div class="ig-stat"><p class="ig-stat-val">2.659</p><p class="ig-stat-lbl">seguindo</p></div>
           </div>
-          <div class="ig-icon-wrap">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs><radialGradient id="ig3a" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="5%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs>
-              <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig3a)"/>
-              <circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.5" fill="none"/>
-              <circle cx="17.2" cy="6.8" r="1" fill="#fff"/>
-            </svg>
+          <p class="ig-bio">💄 Maquiadora em João Pessoa<br>📍 Studio Bruma · Manaíra</p>
+          <div class="ig-grid">
+            <div class="ig-grid-item"><img src="ig_photos/iasmin_1.jpg" alt="" loading="lazy"/></div>
+            <div class="ig-grid-item"><img src="ig_photos/iasmin_2.jpg" alt="" loading="lazy"/></div>
+            <div class="ig-grid-item"><img src="ig_photos/iasmin_3.jpg" alt="" loading="lazy"/></div>
+            <a class="ig-grid-cta" href="https://www.instagram.com/iasminmarinho.art/" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#3897f0" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="#3897f0" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="#3897f0"/></svg>
+              Ver perfil
+            </a>
           </div>
         </div>
-        <div class="ig-stats">
-          <div class="ig-stat"><p class="ig-stat-val">1.565</p><p class="ig-stat-lbl">publicações</p></div>
-          <div class="ig-stat"><p class="ig-stat-val">7.798</p><p class="ig-stat-lbl">seguidores</p></div>
-          <div class="ig-stat"><p class="ig-stat-val">2.493</p><p class="ig-stat-lbl">seguindo</p></div>
-        </div>
-        <p class="ig-bio">💄 Maquiagem &amp; Penteado · Especialista em beleza eterna de noivas<br>📍 Manaíra — Studio Bruma, João Pessoa</p>
-        <div class="ig-grid">
-          <div class="ig-grid-item"><img src="ig_photos/adriguimaraesmakeup_1.jpg" alt="" loading="lazy"/></div>
-          <div class="ig-grid-item"><img src="ig_photos/adriguimaraesmakeup_2.jpg" alt="" loading="lazy"/></div>
-          <div class="ig-grid-item"><img src="ig_photos/adriguimaraesmakeup_3.jpg" alt="" loading="lazy"/></div>
-          <a class="ig-grid-cta" href="https://www.instagram.com/adriguimaraesmakeup/" target="_blank">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#3897f0" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="#3897f0" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="#3897f0"/></svg>
-            Ver perfil no Instagram
-          </a>
+        <div class="studio-body">
+          <p class="duo-info">📍 <strong>Studio Bruma · Manaíra</strong></p>
+          <p class="duo-info">💄 Valor Maquiagem: <strong>R$180</strong></p>
+          <p class="studio-obs" style="margin-bottom:10px;">Valores para atendimento no Studio. Possibilidade de atendimento externo.</p>
+          <a class="duo-contact" href="https://www.instagram.com/iasminmarinho.art/" target="_blank">Entre em Contato — Iasmin</a>
         </div>
       </div>
-      <div class="studio-body">
-        <p class="studio-location-row">📍 Studio Bruma · Manaíra</p>
-        <div class="pricing-grid">
-          <div class="pricing-item"><p class="pricing-label">Maquiagem — Iasmin</p><p class="pricing-value">R$180</p></div>
-          <div class="pricing-item"><p class="pricing-label">Penteado — Sonaly</p><p class="pricing-value">R$170</p></div>
+
+      <!-- Sonaly -->
+      <div class="studio-card">
+        <div class="ig-preview">
+          <div class="ig-header">
+            <div class="ig-avatar-ring">
+              <div class="ig-avatar-inner"><img src="ig_photos/sonaly_avatar.jpg" alt="Sonaly"/></div>
+            </div>
+            <div class="ig-meta">
+              <p class="ig-username">sonalypenteados</p>
+              <p class="ig-name">Sonaly · Penteados</p>
+            </div>
+            <div class="ig-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><radialGradient id="ig3b" cx="30%" cy="107%" r="150%"><stop offset="0%" stop-color="#fdf497"/><stop offset="5%" stop-color="#fdf497"/><stop offset="45%" stop-color="#fd5949"/><stop offset="60%" stop-color="#d6249f"/><stop offset="90%" stop-color="#285AEB"/></radialGradient></defs>
+                <rect x="2" y="2" width="20" height="20" rx="6" fill="url(#ig3b)"/>
+                <circle cx="12" cy="12" r="4.5" stroke="#fff" stroke-width="1.5" fill="none"/>
+                <circle cx="17.2" cy="6.8" r="1" fill="#fff"/>
+              </svg>
+            </div>
+          </div>
+          <div class="ig-stats">
+            <div class="ig-stat"><p class="ig-stat-val">502</p><p class="ig-stat-lbl">posts</p></div>
+            <div class="ig-stat"><p class="ig-stat-val">6.354</p><p class="ig-stat-lbl">seguidores</p></div>
+            <div class="ig-stat"><p class="ig-stat-val">1.853</p><p class="ig-stat-lbl">seguindo</p></div>
+          </div>
+          <p class="ig-bio">✂️ Penteados autorais · Especialista em noivas<br>📍 Studio Bruma · Manaíra</p>
+          <div class="ig-grid">
+            <div class="ig-grid-item"><img src="ig_photos/sonaly_1.jpg" alt="" loading="lazy"/></div>
+            <div class="ig-grid-item"><img src="ig_photos/sonaly_2.jpg" alt="" loading="lazy"/></div>
+            <div class="ig-grid-item"><img src="ig_photos/sonaly_3.jpg" alt="" loading="lazy"/></div>
+            <a class="ig-grid-cta" href="https://www.instagram.com/sonalypenteados/" target="_blank">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#3897f0" stroke-width="2"/><circle cx="12" cy="12" r="4" stroke="#3897f0" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="#3897f0"/></svg>
+              Ver perfil
+            </a>
+          </div>
         </div>
-        <p class="studio-obs">Valores para atendimento no Studio. Caso tenham interesse, também podem verificar a possibilidade de atendimento externo.</p>
+        <div class="studio-body">
+          <p class="duo-info">📍 <strong>Studio Bruma · Manaíra</strong></p>
+          <p class="duo-info">✂️ Valor Penteado: <strong>R$170</strong></p>
+          <p class="studio-obs" style="margin-bottom:10px;">Valores para atendimento no Studio. Possibilidade de atendimento externo.</p>
+          <a class="duo-contact" href="https://wa.me/558396309848" target="_blank">Entre em Contato — Sonaly</a>
+        </div>
       </div>
+
     </div>
 
     <!-- 4 · Mercia Alves Beauty -->
