@@ -173,6 +173,13 @@
     .btn-given:hover { background: rgba(74,180,74,0.1); }
     .btn-given.active { background: rgba(74,180,74,0.18); border-color: #4ab44a; }
     .gift-given-label { font-size: 0.62rem; color: #4ab44a; text-align: center; font-weight: 600; letter-spacing: 0.08em; }
+    .gifts-filter-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .gifts-filter-bar input { flex: 1; min-width: 180px; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; font-size: 0.8rem; font-family: var(--body); }
+    .gifts-filter-bar select { background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; font-size: 0.8rem; font-family: var(--body); cursor: pointer; }
+    .filter-count { font-size: 0.72rem; color: var(--muted); white-space: nowrap; }
+    .given-by-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(74,180,74,0.2); display: flex; flex-direction: column; gap: 4px; }
+    .given-by-row label { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: #4ab44a; }
+    .given-by-row input { background: rgba(74,180,74,0.06); border: 1px solid rgba(74,180,74,0.3); color: var(--text); padding: 7px 10px; font-size: 0.82rem; font-family: var(--body); width: 100%; }
     .new-gift-form { background: var(--panel); border: 1px solid var(--gold); padding: 24px; margin-bottom: 24px; display: none; }
     .new-gift-form.open { display: block; }
     .new-gift-form h4 { font-family: var(--title); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
@@ -380,6 +387,17 @@
             <p id="gifts-saved-msg" style="display:none;font-size:0.78rem;color:var(--green);">✓ Salvo!</p>
             <button class="btn-add" onclick="toggleNewGiftForm()">+ Novo Presente</button>
           </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="gifts-filter-bar">
+          <input type="text" id="filter-gift-name" placeholder="Buscar por nome..." oninput="filterGifts()" />
+          <select id="filter-gift-status" onchange="filterGifts()">
+            <option value="all">Todos</option>
+            <option value="available">Disponíveis</option>
+            <option value="given">Dados</option>
+          </select>
+          <span id="filter-gift-count" class="filter-count"></span>
         </div>
 
         <!-- Formulário de novo presente -->
@@ -1197,6 +1215,10 @@
         return;
       }
       el.innerHTML = data.map(g => renderGiftCard(g)).join('');
+      // Reset filtros e atualiza contador
+      const nameEl = document.getElementById('filter-gift-name');
+      if (nameEl) { nameEl.value = ''; document.getElementById('filter-gift-status').value = 'all'; }
+      document.getElementById('filter-gift-count').textContent = `${data.length} presentes`;
 
       // Drag & drop nas imagens
       data.forEach(g => {
@@ -1220,7 +1242,7 @@
         : '';
       const valueStr = g.value != null ? g.value : '';
       return `
-        <div class="gift-admin-card${g.purchased ? ' is-purchased' : ''}" id="gift-card-${g.id}">
+        <div class="gift-admin-card${g.purchased ? ' is-purchased' : ''}" id="gift-card-${g.id}" data-name="${esc(g.name.toLowerCase())}" data-purchased="${g.purchased ? 'true' : 'false'}">
           <div class="gift-img-wrap">
             ${imgHtml}
             <div class="gift-img-placeholder gift-img-upload-area" id="gift-img-drop-${g.id}" onclick="document.getElementById('gift-img-input-${g.id}').click()">
@@ -1241,6 +1263,11 @@
             <button class="btn-delete" onclick="deleteGift('${g.id}')">Remover</button>
             <span class="gift-saved-badge" id="gift-saved-${g.id}">✓ Salvo</span>
           </div>
+          ${g.purchased ? `
+          <div class="given-by-row" style="grid-column:1/-1;">
+            <label>Presenteado por</label>
+            <input type="text" id="gf-givenby-${g.id}" value="${esc(g.given_by || '')}" placeholder="Nome de quem deu o presente" onblur="saveGivenBy('${g.id}')"/>
+          </div>` : ''}
         </div>`;
     }
 
@@ -1251,13 +1278,40 @@
       const desc  = document.getElementById('gf-desc-'  + id).value.trim() || null;
       const card  = document.getElementById('gf-card-'  + id).value.trim() || null;
       const pix   = document.getElementById('gf-pix-'   + id).value.trim() || null;
-      const { error } = await sb.from('gifts').update({
-        name, value, description: desc, card_link: card, pix_key: pix
-      }).eq('id', id);
+      const givenByEl = document.getElementById('gf-givenby-' + id);
+      const given_by = givenByEl ? givenByEl.value.trim() || null : undefined;
+      const payload = { name, value, description: desc, card_link: card, pix_key: pix };
+      if (given_by !== undefined) payload.given_by = given_by;
+      const { error } = await sb.from('gifts').update(payload).eq('id', id);
       if (error) { alert('Erro ao salvar: ' + error.message); return; }
       const badge = document.getElementById('gift-saved-' + id);
       badge.style.display = 'block';
       setTimeout(() => { badge.style.display = 'none'; }, 2500);
+    }
+
+    async function saveGivenBy(id) {
+      const val = document.getElementById('gf-givenby-' + id)?.value.trim() || null;
+      await sb.from('gifts').update({ given_by: val }).eq('id', id);
+    }
+
+    function filterGifts() {
+      const name   = document.getElementById('filter-gift-name').value.toLowerCase();
+      const status = document.getElementById('filter-gift-status').value;
+      const cards  = document.querySelectorAll('#gifts-admin-list .gift-admin-card');
+      let visible  = 0;
+      cards.forEach(card => {
+        const matchName   = card.dataset.name.includes(name);
+        const isPurchased = card.dataset.purchased === 'true';
+        const matchStatus = status === 'all'
+          || (status === 'given'     &&  isPurchased)
+          || (status === 'available' && !isPurchased);
+        const show = matchName && matchStatus;
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      const total = cards.length;
+      document.getElementById('filter-gift-count').textContent =
+        visible === total ? `${total} presentes` : `${visible} de ${total}`;
     }
 
     async function updateGiftImage(id, file) {
