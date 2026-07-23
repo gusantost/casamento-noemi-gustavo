@@ -404,6 +404,20 @@ async function initGifts() {
       ? `<img class="gift-item-img" src="${g.image_url}" alt="${escHtml(g.name)}" loading="lazy"/>`
       : '';
     const bodyClass = g.image_url ? 'gift-item-body' : 'gift-item-no-img';
+
+    if (g.purchased) {
+      return `
+      <div class="gift-item gift-item--sold">
+        ${imgHtml}
+        <div class="${bodyClass}">
+          <h4>${escHtml(g.name)}</h4>
+          ${g.description ? `<p>${escHtml(g.description)}</p>` : '<p></p>'}
+          <span class="gift-price">${priceStr}</span>
+          <button class="btn-esgotado" disabled>J\u00e1 presenteado \u2713</button>
+        </div>
+      </div>`;
+    }
+
     const pixArg  = g.pix_key  ? `'${escJs(g.pix_key)}'`  : 'null';
     const cardLink = g.card_link || GIFT_CARD_LINKS[g.name] || null;
     const cardArg  = cardLink ? `'${escJs(cardLink)}'` : 'null';

@@ -921,6 +921,36 @@ body {
   color: var(--white);
 }
 
+.gift-item--sold {
+  opacity: 0.52;
+  position: relative;
+}
+.gift-item--sold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.18);
+  pointer-events: none;
+}
+.gift-item--sold h4 {
+  text-decoration: line-through;
+  text-decoration-color: rgba(0,0,0,0.3);
+}
+.gift-item--sold .btn-esgotado {
+  margin-top: 8px;
+  padding: 10px 24px;
+  background: rgba(128,128,128,0.12);
+  border: 1px solid rgba(128,128,128,0.3);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  cursor: not-allowed;
+  pointer-events: none;
+  width: 100%;
+}
+
 /* ===========================
    RSVP
 =========================== */

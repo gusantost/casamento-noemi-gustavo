@@ -168,6 +168,11 @@
     .gift-fields .config-group.full { grid-column: 1 / -1; }
     .gift-actions { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
     .gift-saved-badge { display: none; font-size: 0.68rem; color: var(--green); text-align: center; }
+    .gift-admin-card.is-purchased { border-color: rgba(74,180,74,0.4); background: rgba(74,180,74,0.04); }
+    .btn-given { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 10px; border: 1px solid rgba(74,180,74,0.5); background: transparent; color: #4ab44a; cursor: pointer; transition: background 0.2s; }
+    .btn-given:hover { background: rgba(74,180,74,0.1); }
+    .btn-given.active { background: rgba(74,180,74,0.18); border-color: #4ab44a; }
+    .gift-given-label { font-size: 0.62rem; color: #4ab44a; text-align: center; font-weight: 600; letter-spacing: 0.08em; }
     .new-gift-form { background: var(--panel); border: 1px solid var(--gold); padding: 24px; margin-bottom: 24px; display: none; }
     .new-gift-form.open { display: block; }
     .new-gift-form h4 { font-family: var(--title); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
@@ -1215,7 +1220,7 @@
         : '';
       const valueStr = g.value != null ? g.value : '';
       return `
-        <div class="gift-admin-card" id="gift-card-${g.id}">
+        <div class="gift-admin-card${g.purchased ? ' is-purchased' : ''}" id="gift-card-${g.id}">
           <div class="gift-img-wrap">
             ${imgHtml}
             <div class="gift-img-placeholder gift-img-upload-area" id="gift-img-drop-${g.id}" onclick="document.getElementById('gift-img-input-${g.id}').click()">
@@ -1232,6 +1237,7 @@
           </div>
           <div class="gift-actions">
             <button class="btn-sm" onclick="saveGift('${g.id}')">Salvar</button>
+            <button class="btn-given${g.purchased ? ' active' : ''}" id="btn-given-${g.id}" onclick="toggleGiftPurchased('${g.id}', ${!!g.purchased})">${g.purchased ? '✓ Dado' : 'Marcar como dado'}</button>
             <button class="btn-delete" onclick="deleteGift('${g.id}')">Remover</button>
             <span class="gift-saved-badge" id="gift-saved-${g.id}">✓ Salvo</span>
           </div>
@@ -1259,6 +1265,13 @@
       const url = await uploadGiftImage(file);
       if (!url) return;
       await sb.from('gifts').update({ image_url: url }).eq('id', id);
+      loadGifts();
+    }
+
+    async function toggleGiftPurchased(id, current) {
+      const newVal = !current;
+      const { error } = await sb.from('gifts').update({ purchased: newVal }).eq('id', id);
+      if (error) { alert('Erro: ' + error.message); return; }
       loadGifts();
     }
 
