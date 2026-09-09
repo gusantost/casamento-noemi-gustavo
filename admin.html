@@ -180,6 +180,13 @@
     .given-by-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(74,180,74,0.2); display: flex; flex-direction: column; gap: 4px; }
     .given-by-row label { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: #4ab44a; }
     .given-by-row input { background: rgba(74,180,74,0.06); border: 1px solid rgba(74,180,74,0.3); color: var(--text); padding: 7px 10px; font-size: 0.82rem; font-family: var(--body); width: 100%; }
+    .gifts-summary { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+    .gifts-summary-item { background: var(--panel); border: 1px solid var(--border); padding: 16px 20px; display: flex; flex-direction: column; gap: 6px; }
+    .gifts-summary-item--gold { border-color: rgba(201,169,110,0.4); background: rgba(201,169,110,0.06); }
+    .gifts-summary-label { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .gifts-summary-val { font-family: var(--title); font-size: 1.4rem; font-weight: 300; color: var(--text); }
+    .gifts-summary-item--gold .gifts-summary-val { color: var(--gold); }
+    @media (max-width: 600px) { .gifts-summary { grid-template-columns: 1fr 1fr; } }
     .new-gift-form { background: var(--panel); border: 1px solid var(--gold); padding: 24px; margin-bottom: 24px; display: none; }
     .new-gift-form.open { display: block; }
     .new-gift-form h4 { font-family: var(--title); font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
@@ -398,6 +405,22 @@
             <option value="given">Dados</option>
           </select>
           <span id="filter-gift-count" class="filter-count"></span>
+        </div>
+
+        <!-- Resumo financeiro -->
+        <div class="gifts-summary" id="gifts-summary" style="display:none;">
+          <div class="gifts-summary-item">
+            <span class="gifts-summary-label">Presentes dados</span>
+            <span class="gifts-summary-val" id="summary-count">0</span>
+          </div>
+          <div class="gifts-summary-item gifts-summary-item--gold">
+            <span class="gifts-summary-label">Total recebido</span>
+            <span class="gifts-summary-val" id="summary-total">R$ 0</span>
+          </div>
+          <div class="gifts-summary-item">
+            <span class="gifts-summary-label">Ainda disponíveis</span>
+            <span class="gifts-summary-val" id="summary-available">0</span>
+          </div>
         </div>
 
         <!-- Formulário de novo presente -->
@@ -1219,6 +1242,16 @@
       const nameEl = document.getElementById('filter-gift-name');
       if (nameEl) { nameEl.value = ''; document.getElementById('filter-gift-status').value = 'all'; }
       document.getElementById('filter-gift-count').textContent = `${data.length} presentes`;
+
+      // Calcula e exibe resumo financeiro
+      const given     = data.filter(g => g.purchased);
+      const available = data.filter(g => !g.purchased);
+      const total     = given.reduce((sum, g) => sum + (parseFloat(g.value) || 0), 0);
+      const fmt = v => 'R$ ' + v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('summary-count').textContent     = given.length;
+      document.getElementById('summary-total').textContent     = fmt(total);
+      document.getElementById('summary-available').textContent = available.length;
+      document.getElementById('gifts-summary').style.display   = data.length > 0 ? 'grid' : 'none';
 
       // Drag & drop nas imagens
       data.forEach(g => {
