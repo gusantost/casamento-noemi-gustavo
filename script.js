@@ -412,7 +412,6 @@ async function initGifts() {
         <div class="${bodyClass}">
           <h4>${escHtml(g.name)}</h4>
           ${g.description ? `<p>${escHtml(g.description)}</p>` : '<p></p>'}
-          <span class="gift-price">${priceStr}</span>
           <button class="btn-esgotado" disabled>J\u00e1 presenteado \u2713</button>
         </div>
       </div>`;
