@@ -64,10 +64,10 @@ window.addEventListener('resize', startSlideshow);
 // CONTAGEM REGRESSIVA
 // ===========================
 function updateCountdown() {
-  const wedding = weddingDate || new Date('2026-10-08T15:00:00');
+  const wedding = new Date('2026-10-08T17:00:00');
   const now     = new Date();
-  const diff    = wedding - now;
-  if (diff <= 0) {
+  const diff    = now - wedding;
+  if (diff < 0) {
     ['days','hours','minutes','seconds'].forEach(id => {
       document.getElementById(id).textContent = '00';
     });
