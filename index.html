@@ -183,12 +183,6 @@
             <a id="venue-maps-link" href="https://maps.google.com/?q=Jardim+Riviera+João+Pessoa+PB" target="_blank" class="btn-text venue-link" onclick="event.stopPropagation()">Ver no mapa →</a>
           </div>
         </div>
-        <div id="hcard-presentes" class="info-card" style="cursor:pointer;" onclick="openGiftsSection()">
-          <span class="info-num">02</span>
-          <h3>Presentes</h3>
-          <p>Sua presença já é o maior presente. Mas se quiser nos presentear, clique abaixo.</p>
-          <a href="#gifts-modal" class="btn-text" onclick="event.stopPropagation(); openGiftsSection()">Ver lista →</a>
-        </div>
         <div class="info-card info-card-photo" onclick="openGallery()" style="cursor:pointer;">
           <img src="Foto Site.jpg" alt="Casal" />
           <div class="info-card-photo-overlay">
@@ -288,89 +282,12 @@
     </div>
   </section>
 
-  <!-- LISTA DE PRESENTES -->
-  <section class="gifts-section" id="gifts-section">
-    <div class="gifts-inner">
-      <div class="gifts-header">
-        <span class="section-num">—</span>
-        <h2 class="section-heading">Lista de Presentes</h2>
-      </div>
-      <div class="gifts-grid" id="gifts-grid">
-        <div class="gift-item" style="opacity:0.4;"><h4>Carregando...</h4></div>
-      </div>
-    </div>
-  </section>
-
   <!-- FOOTER -->
   <footer class="footer">
     <p class="footer-names">Noemi <em class="amp">&</em> Gustavo</p>
     <p class="footer-date" id="footer-date-text">08 · 10 · 2026 — João Pessoa, PB</p>
     <p class="footer-quote">"e foi assim, de repente, que tudo fez sentido."</p>
   </footer>
-
-  <!-- MODAL PAGAMENTO -->
-  <div id="paymentModal" class="modal-overlay" onclick="closeModalOutside(event)">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closePaymentModal()">✕</button>
-      <div class="modal-header">
-        <h3 id="modal-gift-name">Presente</h3>
-        <p id="modal-gift-price" class="modal-price">R$ 0,00</p>
-      </div>
-      <div id="step-method" class="modal-step active">
-        <p class="modal-subtitle">Como você prefere pagar?</p>
-        <div class="payment-options">
-          <button class="payment-option" onclick="selectMethod('pix')">
-            <strong>PIX</strong>
-            <small>Instantâneo · Sem taxas</small>
-          </button>
-          <button class="payment-option" onclick="selectMethod('card')">
-            <strong>Cartão</strong>
-            <small>Crédito ou débito</small>
-          </button>
-        </div>
-      </div>
-      <div id="step-pix" class="modal-step">
-        <!-- Modo: valor fixo (presente com preço) -->
-        <div id="pix-mode-code">
-          <p class="modal-subtitle">PIX Copia e Cola</p>
-          <div class="pix-box">
-            <p id="pix-amount" class="pix-amount">R$ —</p>
-            <div class="pix-code-wrap">
-              <p id="pix-code-preview" class="pix-code-preview">—</p>
-            </div>
-            <button class="btn-copy-pix" onclick="copyPix()">Copiar código PIX</button>
-            <p id="pix-copied" style="display:none;color:var(--green);font-size:.78rem;margin-top:10px;">✓ Copiado! Cole no app do seu banco em PIX → Copia e Cola.</p>
-            <p class="pix-note">O valor já vem preenchido automaticamente.</p>
-            <span id="pix-key-value" style="display:none;">—</span>
-          </div>
-        </div>
-        <!-- Modo: valor livre -->
-        <div id="pix-mode-key" style="display:none;">
-          <p class="modal-subtitle">PIX — Chave</p>
-          <div class="pix-box">
-            <p class="pix-note" style="margin-bottom:14px;">Copie a chave abaixo e cole no seu banco. Você escolhe o valor que quiser presentear.</p>
-            <div class="pix-code-wrap">
-              <p id="pix-key-free" class="pix-code-preview" style="font-size:.9rem;">—</p>
-            </div>
-            <button class="btn-copy-pix" onclick="copyPixKey()">Copiar chave PIX</button>
-            <p id="pix-key-copied" style="display:none;color:var(--green);font-size:.78rem;margin-top:10px;">✓ Copiado! Cole no campo Chave PIX do seu banco.</p>
-          </div>
-        </div>
-        <button class="btn-back" onclick="goBack()">← Voltar</button>
-      </div>
-      <div id="step-card" class="modal-step">
-        <p class="modal-subtitle">Pagamento por cartão</p>
-        <div class="card-info-box">
-          <p>Você será direcionado para o nosso parceiro de pagamento seguro.</p>
-          <div class="card-badges">
-            <span>🔒 SSL</span><span>Visa</span><span>Master</span><span>Elo</span>
-          </div>
-        </div>
-        <a id="card-payment-link" href="#" target="_blank" class="btn-submit" onclick="closePaymentModal()">Pagar com Cartão →</a>
-        <button class="btn-back" onclick="goBack()">← Voltar</button>
-      </div>
-    </div>
-  </div>
 
   <!-- LIGHTBOX -->
   <div id="lightbox" class="lightbox" onclick="closeLightbox()">
